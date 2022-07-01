@@ -604,7 +604,7 @@ public class PlayGround extends Actor  {
         }
         if(changedBoat.getDirection()==0){
             for(int i=0;i<changedBoat.getSize();i++){
-                if(y+1>=numberOfCellsInRow || cellsGround[x][y+i].getIsTaken() || cellsGround[x][y+i].getShouldBeEmpty()){
+                if(y+i>=numberOfCellsInRow || cellsGround[x][y+i].getIsTaken() || cellsGround[x][y+i].getShouldBeEmpty()){
                     System.out.println("checkIfCanLocateUserBoat3" + " x:" + x + " y:" + (y+i));
                     return false;
                 }
