@@ -2,6 +2,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class SeaBattleGame extends Game {
@@ -11,14 +12,16 @@ public class SeaBattleGame extends Game {
     @Override
     public void create () {
         mainMenu = new MainMenu(this);
-        //putShipsScreen = new PutShipsScreen(this);
+        putShipsScreen = new PutShipsScreen(this);
         shapeRenderer = new ShapeRenderer();
-        setScreen(new PutShipsScreen(this) );
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(mainMenu.getStage()); // set stage as first input processor
+        multiplexer.addProcessor(putShipsScreen);  // set your game input precessor as second
+        Gdx.input.setInputProcessor(multiplexer);
+        setScreen(putShipsScreen);
     }
     public void setPutScreen(){
-        mainMenu.dispose();
-        putShipsScreen = new PutShipsScreen(this);
-        Gdx.input.setInputProcessor(putShipsScreen);
+
         setScreen(putShipsScreen);
     }
 

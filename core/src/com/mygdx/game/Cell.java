@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 public class Cell extends Image {
     private boolean isTaken;
     private boolean shouldBeEmpty;
+    private boolean isShot;
     @Override
     public void draw(Batch batch, float parentAlpha) {
         batch.setColor(this.getColor());
@@ -30,6 +31,14 @@ public class Cell extends Image {
     }
     public boolean getShouldBeEmpty(){
         return this.shouldBeEmpty;
+    }
+
+    public boolean isShot() {
+        return isShot;
+    }
+
+    public void setShot(boolean shot) {
+        isShot = shot;
     }
 
     public Cell(){

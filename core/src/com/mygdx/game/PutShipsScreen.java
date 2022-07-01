@@ -1,9 +1,12 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -20,7 +23,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
     SeaBattleGame game;
@@ -38,7 +43,7 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
         this.game = game;
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Zyana.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 30;
+        parameter.size = 40;
         parameter.color = Color.BLACK;
         parameter.borderWidth = 1;
         parameter.borderColor = Color.GRAY;
@@ -52,7 +57,7 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
         TextureRegion myTextureRegion = new TextureRegion(myTexture);
         TextureRegionDrawable myTexRegionDrawable = new TextureRegionDrawable(myTextureRegion);
         putAgainButton = new ImageButton(myTexRegionDrawable);
-        putAgainButton.setPosition(Gdx.graphics.getWidth()-putAgainButton.getWidth()-60,Gdx.graphics.getHeight()-putAgainButton.getHeight()-80);
+        putAgainButton.setPosition(Gdx.graphics.getWidth()/3*2+30,Gdx.graphics.getHeight()-putAgainButton.getHeight()-100);
         Texture myTexture1 = new Texture(Gdx.files.internal("start.png"));
         TextureRegion myTextureRegion1 = new TextureRegion(myTexture1);
         TextureRegionDrawable myTexRegionDrawable1 = new TextureRegionDrawable(myTextureRegion1);
@@ -65,11 +70,12 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
             }
         });
         putAgainButton.setName("Again");
-        playButton.setPosition(Gdx.graphics.getWidth()-playButton.getWidth()-30,putAgainButton.getY()-putAgainButton.getHeight()-20);
+        playButton.setPosition(Gdx.graphics.getWidth()/3*2,putAgainButton.getY()-putAgainButton.getHeight()-20);
         stage.addActor(putAgainButton);
         stage.addActor(playGround);
         stage.addActor(playButton);
         Gdx.input.setInputProcessor(this);
+
     }
 
     @Override
@@ -78,7 +84,7 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
         ScreenUtils.clear(0, 0, 0, 1);
         batch.begin();
         sprite.draw(batch);
-        font.draw(batch,text,11,30);
+        font.draw(batch,text,Gdx.graphics.getWidth()/4+25,90);
         batch.end();
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
@@ -97,10 +103,6 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
     @Override
     public boolean keyTyped(char character) {
         return false;
-    }
-
-    public void putRandomBoats(){
-
     }
 
     @Override

@@ -9,14 +9,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 public class Boat extends Image {
     private int size;
-    private boolean isAlive;
+    private int damaged;
     private int direction;
     private Cell startCell;
 
     public Boat(int size, Texture image){
         super(image);
         this.size = size;
-        this.isAlive = true;
+        this.damaged = 0;
         setBounds(getX(), getY(),getWidth(),getHeight());
         setTouchable(Touchable.enabled);
     }
@@ -39,11 +39,14 @@ public class Boat extends Image {
     public int getSize(){
         return this.size;
     }
-    public void kill(){
-        isAlive=false;
+    public boolean strike(){
+        damaged++;
+        if(damaged==size)
+            return true;
+        return false;
     }
-    public boolean getIsAlive(){
-        return isAlive;
+    public int getIsDamaged(){
+        return damaged;
     }
 
     public static Texture getBoatImage(int size){

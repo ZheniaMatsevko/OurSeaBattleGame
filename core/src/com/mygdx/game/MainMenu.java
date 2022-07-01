@@ -41,7 +41,7 @@ public class MainMenu extends ScreenAdapter {
         this.game = game;
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Zyana.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 68;
+        parameter.size = 85;
         parameter.borderWidth = 1;
         parameter.borderColor = Color.GRAY;
         font = generator.generateFont(parameter);
@@ -57,9 +57,8 @@ public class MainMenu extends ScreenAdapter {
         singleModeButton.addListener( new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                PutShipsScreen putShipsScreen = new PutShipsScreen(game);
-                Gdx.input.setInputProcessor(putShipsScreen);
-                game.setScreen(putShipsScreen);
+                hide();
+                game.setPutScreen();
             }
         });
         twoModeButton = new TextButton("Two mode", skin);
@@ -75,7 +74,7 @@ public class MainMenu extends ScreenAdapter {
         TextureRegionDrawable myTexRegionDrawable2 = new TextureRegionDrawable(myTextureRegion2);
         helpButton = new ImageButton(myTexRegionDrawable2);
         helpButton.setPosition(settingsButton.getWidth()+20,settingsButton.getY());
-        table.padTop(50);
+        table.padTop(100);
         table.add(singleModeButton).padBottom(15);
         table.row();
         table.add(twoModeButton).padBottom(15);
@@ -91,6 +90,9 @@ public class MainMenu extends ScreenAdapter {
         sprite.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         Gdx.input.setInputProcessor(stage);
+    }
+    public Stage getStage(){
+        return this.stage;
     }
 
     @Override
@@ -113,7 +115,7 @@ public class MainMenu extends ScreenAdapter {
         batch.begin();
         String text = "SEA BATTLE";
         sprite.draw(batch);
-        font.draw(batch,"SEA BATTLE",Gdx.graphics.getWidth()/4,Gdx.graphics.getHeight()/4*3);
+        font.draw(batch,"SEA BATTLE",Gdx.graphics.getWidth()/3+20,Gdx.graphics.getHeight()/4*3);
         batch.end();
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();

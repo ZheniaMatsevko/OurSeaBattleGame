@@ -37,7 +37,7 @@ public class PlayGround extends Actor  {
         group = new Group();
         stage = new Stage();
         cellsGround = new Cell[numberOfCellsInRow][numberOfCellsInRow];
-        float x = 10, y=Gdx.graphics.getHeight()-10;
+        float x = Gdx.graphics.getWidth()/4, y=Gdx.graphics.getHeight()-50;
         int count=0;
         for(int i=0;i<numberOfCellsInRow;i++){
             for(int j=0;j<numberOfCellsInRow;j++){
@@ -52,13 +52,14 @@ public class PlayGround extends Actor  {
                     cellsGround[i][j].setPosition(x,y);
                 }
                 if(j==numberOfCellsInRow-1){
-                    x=10;
+                    x=Gdx.graphics.getWidth()/4;
                     y=cellsGround[i][j-1].getY()-cellsGround[i][j-1].getHeight();
                 }
                 cellsGround[i][j].setName(String.valueOf(count++));
                 group.addActor(cellsGround[i][j]);
             }
         }
+        //group.setPosition(Gdx.graphics.getWidth()/4,0);
         stage.addActor(group);
         boats = new Boat[numberOfBoats];
         sprites = new Sprite[numberOfBoats];
