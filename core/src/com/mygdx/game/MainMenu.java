@@ -57,7 +57,9 @@ public class MainMenu extends ScreenAdapter {
         singleModeButton.addListener( new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setPutScreen();
+                PutShipsScreen putShipsScreen = new PutShipsScreen(game);
+                Gdx.input.setInputProcessor(putShipsScreen);
+                game.setScreen(putShipsScreen);
             }
         });
         twoModeButton = new TextButton("Two mode", skin);

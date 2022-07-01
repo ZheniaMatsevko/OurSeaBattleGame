@@ -295,6 +295,15 @@ public class PlayGround extends Actor  {
         return cellsGround[0][0].getHeight();
     }
 
+    public void cleanField(){
+        for(int i=0;i<numberOfCellsInRow;i++){
+            for(int j=0;j<numberOfCellsInRow;j++){
+                cellsGround[i][j].setIsTaken(false);
+                cellsGround[i][j].setShouldBeEmpty(false);
+            }
+            boats[i].setRotation(0);
+        }
+    }
     public void putRandomBoats(){
         int originX,originY;
         int direction=0;
@@ -595,7 +604,7 @@ public class PlayGround extends Actor  {
         }
         if(changedBoat.getDirection()==0){
             for(int i=0;i<changedBoat.getSize();i++){
-                if(cellsGround[x][y+i].getIsTaken() || cellsGround[x][y+i].getShouldBeEmpty()){
+                if(y+1>=numberOfCellsInRow || cellsGround[x][y+i].getIsTaken() || cellsGround[x][y+i].getShouldBeEmpty()){
                     System.out.println("checkIfCanLocateUserBoat3" + " x:" + x + " y:" + (y+i));
                     return false;
                 }
@@ -606,7 +615,7 @@ public class PlayGround extends Actor  {
             }
         }else if(changedBoat.getDirection()==1){
             for(int i=0;i<changedBoat.getSize();i++){
-                if(cellsGround[x-i][y].getIsTaken() || cellsGround[x-i][y].getShouldBeEmpty()){
+                if(x-i <0 || cellsGround[x-i][y].getIsTaken() || cellsGround[x-i][y].getShouldBeEmpty()){
                     System.out.println("checkIfCanLocateUserBoat5" + "x:" + (x-i) + " y:" + y);
                     return false;
                 }
@@ -760,6 +769,41 @@ public class PlayGround extends Actor  {
                 }
             }
         }
+    }
+    public boolean Rotate(){
+        Cell cellOrigin = changedBoat.getStartCell();
+        removeOldLocation();
+        System.out.println("Start cell for rotation: " + cellOrigin.getName());
+        if(changedBoat.getDirection()==0){
+            changedBoat.setRotation(90);
+            changedBoat.setDirection(1);
+            if(checkIfCanLocateUserBoat(cellOrigin)){
+                System.out.println("Here");
+                changedBoat.setPosition(cellOrigin.getX()+getCellWidth(),cellOrigin.getY());
+            }else{
+                System.out.println("No");
+                changedBoat.setRotation(0);
+                changedBoat.setDirection(0);
+                changedBoat.setPosition(cellOrigin.getX(),cellOrigin.getY());
+                addOldLocation();
+            }
+        }else{
+            changedBoat.setRotation(0);
+            changedBoat.setDirection(0);
+            if(checkIfCanLocateUserBoat(cellOrigin)){
+                System.out.println("Here");
+                changedBoat.setPosition(cellOrigin.getX(),cellOrigin.getY());
+            }else{
+                System.out.println("No");
+                changedBoat.setRotation(90);
+                changedBoat.setDirection(1);
+                changedBoat.setPosition(cellOrigin.getX()+getCellWidth(),cellOrigin.getY());
+                addOldLocation();
+            }
+        }
+
+        isBoatChanged=0;
+        return true;
     }
     @Override
     public void draw(Batch batch, float parentAlpha) {

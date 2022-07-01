@@ -11,11 +11,14 @@ public class SeaBattleGame extends Game {
     @Override
     public void create () {
         mainMenu = new MainMenu(this);
-        putShipsScreen = new PutShipsScreen(this);
+        //putShipsScreen = new PutShipsScreen(this);
         shapeRenderer = new ShapeRenderer();
-        setScreen(putShipsScreen);
+        setScreen(new PutShipsScreen(this) );
     }
     public void setPutScreen(){
+        mainMenu.dispose();
+        putShipsScreen = new PutShipsScreen(this);
+        Gdx.input.setInputProcessor(putShipsScreen);
         setScreen(putShipsScreen);
     }
 

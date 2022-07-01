@@ -112,6 +112,8 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
             System.out.println("Play button");
         }else if(hitActor2==putAgainButton.getImage()){
             System.out.println("AGAIN button");
+            playGround.cleanField();
+            playGround.putRandomBoats();
         }
         if(hitActor==null)
             System.out.println("Stage actor not found");
@@ -121,6 +123,10 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
                 playGround.setPreviousY(hitActor.getY());
                 playGround.setPreviousX(hitActor.getX());
                 playGround.setCellDragged(false);
+                if(((Boat) hitActor).getSize()>1){
+                    playGround.setChangedBoat((Boat)hitActor);
+                    playGround.setIsBoatChanged(4);
+                }
             }
             if(hitActor.getClass()==Cell.class){
                 playGround.setIsBoatChanged(0);
@@ -135,6 +141,8 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         if(playGround.isBoatChanged()==1)
             playGround.setIsBoatChanged(2);
+        if(playGround.isBoatChanged()==4)
+            playGround.Rotate();
         return true;
     }
 
