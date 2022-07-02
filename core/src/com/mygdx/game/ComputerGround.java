@@ -37,6 +37,7 @@ public class ComputerGround extends Actor {
     public void shoot(){
         int originX, originY;
         if(damagedCells.isEmpty()){
+            System.out.println("damagedCells.isEmpty()");
             originX = ThreadLocalRandom.current().nextInt(0, userGround.getNumberOfCellsInRow());
             originY = ThreadLocalRandom.current().nextInt(0, userGround.getNumberOfCellsInRow());
             while(userGround.getCell(originX,originY).isShot()){
@@ -59,6 +60,7 @@ public class ComputerGround extends Actor {
             int direction = 0;
             Cell cell = null;
             if(damagedCells.size()==1){
+                System.out.println("damagedCells.size()==1");
                 while(shouldRepeat){
                     direction = ThreadLocalRandom.current().nextInt(0, 4);
                     switch (direction){
@@ -98,6 +100,7 @@ public class ComputerGround extends Actor {
                         damagedDirection=0;
                     else
                         damagedDirection=1;
+                    damagedDirection=direction;
                     isStrike = true;
                 }else{
                     cell.changeColor();
@@ -105,9 +108,10 @@ public class ComputerGround extends Actor {
                     isStrike = false;
                 }
             }else{
-                if(damagedDirection==0){
-                    if(userGround.getJ(damagedCells.get(damagedCells.size()-1))+1<userGround.getNumberOfCellsInRow() && !userGround.getCell(userGround.getI(damagedCells.get(damagedCells.size()-1)),userGround.getJ(damagedCells.get(damagedCells.size()-1))+1).isShot()){
+                if(damagedDirection<2){
+                    if(damagedDirection==0 && userGround.getJ(damagedCells.get(damagedCells.size()-1))+1<userGround.getNumberOfCellsInRow() && !userGround.getCell(userGround.getI(damagedCells.get(damagedCells.size()-1)),userGround.getJ(damagedCells.get(damagedCells.size()-1))+1).isShot()){
                         cell = userGround.getCell(userGround.getI(damagedCells.get(damagedCells.size()-1)),userGround.getJ(damagedCells.get(damagedCells.size()-1))+1);
+                        System.out.println("1damagedDirection==0 cell=" + cell.getName());
                         if(userGround.checkShotCell(cell)){
                             if(!userGround.killCell(cell)){
                                 damagedCells.add(cell);
@@ -120,8 +124,24 @@ public class ComputerGround extends Actor {
                             cell.setShot(true);
                             isStrike = false;
                         }
-                    }else if(!userGround.getCell(userGround.getI(damagedCells.get(damagedCells.size()-1)),userGround.getJ(damagedCells.get(damagedCells.size()-1))-1).isShot()){
+                    }else if(damagedDirection==0){
+                       cell = userGround.getCell(userGround.getI(damagedCells.get(0)),userGround.getJ(damagedCells.get(0))-1);
+                        if(userGround.checkShotCell(cell)){
+                            if(!userGround.killCell(cell)){
+                                damagedCells.add(cell);
+                            }else{
+                                damagedCells.clear();
+                            }
+                            isStrike = true;
+                        }else{
+                            cell.changeColor();
+                            cell.setShot(true);
+                            isStrike = false;
+                        }
+                        damagedDirection=1;
+                    }else if(damagedDirection==1 && userGround.getJ(damagedCells.get(damagedCells.size()-1))-1>=0 && !userGround.getCell(userGround.getI(damagedCells.get(damagedCells.size()-1)),userGround.getJ(damagedCells.get(damagedCells.size()-1))-1).isShot()){
                         cell = userGround.getCell(userGround.getI(damagedCells.get(damagedCells.size()-1)),userGround.getJ(damagedCells.get(damagedCells.size()-1))-1);
+                        System.out.println("2damagedDirection==0 cell=" + cell.getName());
                         if(userGround.checkShotCell(cell)){
                             if(!userGround.killCell(cell)){
                                 damagedCells.add(cell);
@@ -134,8 +154,9 @@ public class ComputerGround extends Actor {
                             cell.setShot(true);
                             isStrike = false;
                         }
-                    }else{
-                        cell = userGround.getCell(userGround.getI(damagedCells.get(0)),userGround.getJ(damagedCells.get(0))-1);
+                    }else if(damagedDirection==1){
+                        cell = userGround.getCell(userGround.getI(damagedCells.get(0)),userGround.getJ(damagedCells.get(0))+1);
+                        System.out.println("3damagedDirection==0 cell=" + cell.getName());
                         if(userGround.checkShotCell(cell)){
                             if(!userGround.killCell(cell)){
                                 damagedCells.add(cell);
@@ -148,10 +169,12 @@ public class ComputerGround extends Actor {
                             cell.setShot(true);
                             isStrike = false;
                         }
+                        damagedDirection=0;
                     }
                 }else{
-                    if(userGround.getI(damagedCells.get(damagedCells.size()-1))+1<userGround.getNumberOfCellsInRow() && !userGround.getCell(userGround.getI(damagedCells.get(damagedCells.size()-1))+1,userGround.getJ(damagedCells.get(damagedCells.size()-1))).isShot()){
+                    if(damagedDirection==2 && userGround.getI(damagedCells.get(damagedCells.size()-1))+1<userGround.getNumberOfCellsInRow() && !userGround.getCell(userGround.getI(damagedCells.get(damagedCells.size()-1))+1,userGround.getJ(damagedCells.get(damagedCells.size()-1))).isShot()){
                         cell = userGround.getCell(userGround.getI(damagedCells.get(damagedCells.size()-1))+1,userGround.getJ(damagedCells.get(damagedCells.size()-1)));
+                        System.out.println("1damagedDirection==1 cell=" + cell.getName());
                         if(userGround.checkShotCell(cell)){
                             if(!userGround.killCell(cell)){
                                 damagedCells.add(cell);
@@ -164,22 +187,9 @@ public class ComputerGround extends Actor {
                             cell.setShot(true);
                             isStrike = false;
                         }
-                    }else if(!userGround.getCell(userGround.getI(damagedCells.get(damagedCells.size()-1))-1,userGround.getJ(damagedCells.get(damagedCells.size()-1))).isShot()){
-                        cell = userGround.getCell(userGround.getI(damagedCells.get(damagedCells.size()-1))-1,userGround.getJ(damagedCells.get(damagedCells.size()-1)));
-                        if(userGround.checkShotCell(cell)){
-                            if(!userGround.killCell(cell)){
-                                damagedCells.add(cell);
-                            }else{
-                                damagedCells.clear();
-                            }
-                            isStrike = true;
-                        }else{
-                            cell.changeColor();
-                            cell.setShot(true);
-                            isStrike = false;
-                        }
-                    }else{
+                    }else if(damagedDirection==2){
                         cell = userGround.getCell(userGround.getI(damagedCells.get(0))-1,userGround.getJ(damagedCells.get(0)));
+                        System.out.println("1damagedDirection==1 cell=" + cell.getName());
                         if(userGround.checkShotCell(cell)){
                             if(!userGround.killCell(cell)){
                                 damagedCells.add(cell);
@@ -192,6 +202,38 @@ public class ComputerGround extends Actor {
                             cell.setShot(true);
                             isStrike = false;
                         }
+                        damagedDirection=3;
+                    }else if(damagedDirection==3 && userGround.getI(damagedCells.get(damagedCells.size()-1))-1 >=0 &&!userGround.getCell(userGround.getI(damagedCells.get(damagedCells.size()-1))-1,userGround.getJ(damagedCells.get(damagedCells.size()-1))).isShot()){
+                        cell = userGround.getCell(userGround.getI(damagedCells.get(damagedCells.size()-1))-1,userGround.getJ(damagedCells.get(damagedCells.size()-1)));
+                        System.out.println("2damagedDirection==1 cell=" + cell.getName());
+                        if(userGround.checkShotCell(cell)){
+                            if(!userGround.killCell(cell)){
+                                damagedCells.add(cell);
+                            }else{
+                                damagedCells.clear();
+                            }
+                            isStrike = true;
+                        }else{
+                            cell.changeColor();
+                            cell.setShot(true);
+                            isStrike = false;
+                        }
+                    }else if(damagedDirection==3){
+                        cell = userGround.getCell(userGround.getI(damagedCells.get(0))+1,userGround.getJ(damagedCells.get(0)));
+                        System.out.println("3damagedDirection==1 cell=" + cell.getName());
+                        if(userGround.checkShotCell(cell)){
+                            if(!userGround.killCell(cell)){
+                                damagedCells.add(cell);
+                            }else{
+                                damagedCells.clear();
+                            }
+                            isStrike = true;
+                        }else{
+                            cell.changeColor();
+                            cell.setShot(true);
+                            isStrike = false;
+                        }
+                        damagedDirection=2;
                     }
                 }
             }
