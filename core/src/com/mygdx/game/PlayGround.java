@@ -28,8 +28,11 @@ public class PlayGround extends Actor  {
     private float previousX;
     private float previousY;
     private boolean isCellDragged;
+    private boolean isBoatsVisible;
+    private Cell shotCell;
 
-    public PlayGround(int numberOfCellsInRow, int numberOfBoats){
+    public PlayGround(int numberOfCellsInRow, int numberOfBoats, int xC, int yC){
+        isBoatsVisible=true;
         isBoatChanged = 0;
         this.numberOfCellsInRow = numberOfCellsInRow;
         setBounds(0,Gdx.graphics.getHeight(),Gdx.graphics.getWidth(),Gdx.graphics.getHeight()-50);
@@ -37,7 +40,7 @@ public class PlayGround extends Actor  {
         group = new Group();
         stage = new Stage();
         cellsGround = new Cell[numberOfCellsInRow][numberOfCellsInRow];
-        float x = Gdx.graphics.getWidth()/4, y=Gdx.graphics.getHeight()-50;
+        float x = xC, y=yC;
         int count=0;
         for(int i=0;i<numberOfCellsInRow;i++){
             for(int j=0;j<numberOfCellsInRow;j++){
@@ -52,7 +55,7 @@ public class PlayGround extends Actor  {
                     cellsGround[i][j].setPosition(x,y);
                 }
                 if(j==numberOfCellsInRow-1){
-                    x=Gdx.graphics.getWidth()/4;
+                    x=xC;
                     y=cellsGround[i][j-1].getY()-cellsGround[i][j-1].getHeight();
                 }
                 cellsGround[i][j].setName(String.valueOf(count++));
@@ -124,6 +127,92 @@ public class PlayGround extends Actor  {
             }
         });
     }
+    public void setNewPositions(int xC, int yC){
+        float x = xC, y=yC;
+        for(int i=0;i<numberOfCellsInRow;i++){
+            for(int j=0;j<numberOfCellsInRow;j++){
+                if(i==0 && j==0){
+                    y-=cellsGround[i][j].getHeight();
+                    cellsGround[i][j].setPosition(x,y);
+                }else if(j==0){
+                    cellsGround[i][j].setPosition(x,y);
+                }else{
+                    x=cellsGround[i][j-1].getX()+cellsGround[i][j-1].getWidth();
+                    cellsGround[i][j].setPosition(x,y);
+                }
+                if(j==numberOfCellsInRow-1){
+                    x=xC;
+                    y=cellsGround[i][j-1].getY()-cellsGround[i][j-1].getHeight();
+                }
+            }
+        }
+        for(int i=0;i<numberOfCellsInRow;i++){
+            if(boats[i].getDirection()==0)
+                boats[i].setPosition(boats[i].getStartCell().getX(),boats[i].getStartCell().getY());
+            if(boats[i].getDirection()==1)
+                boats[i].setPosition(boats[i].getStartCell().getX()+getCellWidth(),boats[i].getStartCell().getY());
+        }
+    }
+    public boolean getIsBoatsVisible(){
+        return isBoatsVisible;
+    }
+
+    public void setBoatsVisible(boolean boatsVisible) {
+        isBoatsVisible = boatsVisible;
+        for(int i=0;i<numberOfCellsInRow;i++){
+            boats[i].setVisible(boatsVisible);
+        }
+    }
+    public void showKilledBoat(Boat boat){
+        boat.setVisible(true);
+    }
+
+    public void setShotCell(Cell shotCell) {
+        this.shotCell = shotCell;
+    }
+
+    public Cell getShotCell() {
+        return shotCell;
+    }
+    public boolean checkShotCell(Cell cell){
+        if(!cell.getIsTaken())
+            return false;
+        return true;
+    }
+    public boolean killCell(Cell cell){
+        cell.setShot(true);
+        System.out.println("Shot: "+cell.getName());
+        if(cell.getBoat().strike()){
+            System.out.println("Killed");
+            cell.getBoat().setVisible(true);
+            Image cross = new Image(new Texture(Gdx.files.internal("x.png")));
+            cross.setPosition(cell.getX(),cell.getY());
+            stage.addActor(cross);
+            int x=0,y=0;
+            for(int i=0;i<numberOfCellsInRow;i++){
+                for(int j=0;j<numberOfCellsInRow;j++){
+                    if(cellsGround[i][j].equals(cell.getBoat().getStartCell())) {
+                        x = i;
+                        y = j;
+                        break;
+                    }
+                }
+            }
+            if(cell.getBoat().getDirection()==0)
+                shotSurroundingHorizontal(x,y,cell.getBoat().getSize());
+            if(cell.getBoat().getDirection()==1)
+                shotSurroundingVertical(x,y,cell.getBoat().getSize());
+            return true;
+        }else{
+            System.out.println("Damaged");
+            Image cross = new Image(new Texture(Gdx.files.internal("x.png")));
+            cross.setPosition(cell.getX(),cell.getY());
+            stage.addActor(cross);
+            return false;
+        }
+
+    }
+
 
     public void setCellDragged(boolean cellDragged) {
         isCellDragged = cellDragged;
@@ -172,8 +261,59 @@ public class PlayGround extends Actor  {
         }
         this.changedBoat = changedBoat;
     }
-
-    private boolean checkSurroundingHorizontal(int originX, int originY, int boatSize){
+    private void shotSurroundingHorizontal(int originX, int originY, int boatSize){
+        LinkedList<Cell> emptyCells = new LinkedList<>();
+        if(originY-1>=0) {
+            emptyCells.add(cellsGround[originX][originY - 1]);
+        }
+        if (originY - 1 >= 0 && originX - 1 >= 0)
+            emptyCells.add(cellsGround[originX-1][originY - 1]);
+        if (originY - 1 >= 0 && originX + 1 < numberOfCellsInRow)
+            emptyCells.add(cellsGround[originX+1][originY - 1]);
+        for (int i = 0; i < boatSize; i++) {
+            if (originX + 1 < numberOfCellsInRow)
+                emptyCells.add(cellsGround[originX+1][originY + i]);
+            if (originX - 1 >= 0)
+                emptyCells.add(cellsGround[originX-1][originY +i]);
+        }
+        if (originY + boatSize < numberOfCellsInRow && originX - 1 >= 0)
+            emptyCells.add(cellsGround[originX-1][originY + boatSize]);
+        if (originY + boatSize < numberOfCellsInRow && originX + 1 < numberOfCellsInRow)
+            emptyCells.add(cellsGround[originX+1][originY + boatSize]);
+        if (originY + boatSize < numberOfCellsInRow)
+            emptyCells.add(cellsGround[originX][originY + boatSize]);
+        for(Cell cell: emptyCells){
+            cell.setShot(true);
+            cell.changeColor();
+        }
+    }
+    private void shotSurroundingVertical(int originX, int originY, int boatSize) {
+        LinkedList<Cell> emptyCells = new LinkedList<>();
+        if (originX + 1 <numberOfCellsInRow) {
+            emptyCells.add(cellsGround[originX+1][originY]);
+        }
+        if (originY - 1 >= 0 && originX + 1 <numberOfCellsInRow)
+            emptyCells.add(cellsGround[originX+1][originY - 1]);
+        if (originX + 1 <numberOfCellsInRow && originY + 1 < numberOfCellsInRow)
+            emptyCells.add(cellsGround[originX+1][originY +1]);
+        for (int i = 0; i < boatSize; i++) {
+            if (originY + 1 < numberOfCellsInRow && originX-i>=0)
+                emptyCells.add(cellsGround[originX-i][originY + 1]);
+            if (originY - 1 >= 0 && originX-i>=0)
+                emptyCells.add(cellsGround[originX-i][originY - 1]);
+        }
+        if (originX - boatSize >= 0 && originY - 1 >= 0)
+            emptyCells.add(cellsGround[originX - boatSize][originY - 1]);
+        if (originX - boatSize >= 0 && originY + 1 < numberOfCellsInRow)
+            emptyCells.add(cellsGround[originX - boatSize][originY + 1]);
+        if (originX - boatSize >= 0)
+            emptyCells.add(cellsGround[originX - boatSize][originY]);
+        for(Cell cell: emptyCells){
+            cell.setShot(true);
+            cell.changeColor();
+        }
+    }
+    private boolean checkSurroundingHorizontal(int originX, int originY, int boatSize, Boat boat){
         LinkedList<Cell> emptyCells = new LinkedList<>();
         if(originY-1>=0 && cellsGround[originX][originY-1].getIsTaken()){
             System.out.println("checkSurroundingHorizontal1");
@@ -233,12 +373,13 @@ public class PlayGround extends Actor  {
         System.out.print("  setTaken: ");
         for(int i=0;i<boatSize;i++){
             cellsGround[originX][originY+i].setIsTaken(true);
+            cellsGround[originX][originY+i].setBoat(boat);
             System.out.print(cellsGround[originX][originY+i].getName() + " ");
         }
         System.out.println();
         return true;
     }
-    private boolean checkSurroundingVertical(int originX, int originY, int boatSize){
+    private boolean checkSurroundingVertical(int originX, int originY, int boatSize, Boat boat){
         LinkedList<Cell> emptyCells = new LinkedList<>();
         if(originX+1<numberOfCellsInRow && cellsGround[originX+1][originY].getIsTaken()){
             return false;
@@ -284,6 +425,7 @@ public class PlayGround extends Actor  {
         System.out.print("  setTaken: ");
         for(int i=0;i<boatSize;i++){
             cellsGround[originX-i][originY].setIsTaken(true);
+            cellsGround[originX-i][originY].setBoat(boat);
             System.out.print(cellsGround[originX-i][originY].getName() + " ");
         }
         System.out.println();
@@ -300,10 +442,35 @@ public class PlayGround extends Actor  {
         for(int i=0;i<numberOfCellsInRow;i++){
             for(int j=0;j<numberOfCellsInRow;j++){
                 cellsGround[i][j].setIsTaken(false);
+                cellsGround[i][j].setBoat(null);
                 cellsGround[i][j].setShouldBeEmpty(false);
             }
             boats[i].setRotation(0);
         }
+    }
+    public int getI(Cell cell){
+        for(int i=0;i<numberOfCellsInRow;i++){
+            for(int j=0;j<numberOfCellsInRow;j++){
+                if(cellsGround[i][j].equals(cell))
+                    return i;
+            }
+        }
+        return -1;
+    }
+    public int getJ(Cell cell){
+        for(int i=0;i<numberOfCellsInRow;i++){
+            for(int j=0;j<numberOfCellsInRow;j++){
+                if(cellsGround[i][j].equals(cell))
+                    return j;
+            }
+        }
+        return -1;
+    }
+    public Cell getCell(int i, int j){
+        return cellsGround[i][j];
+    }
+    public int getNumberOfCellsInRow(){
+        return numberOfCellsInRow;
     }
     public void putRandomBoats(){
         int originX,originY;
@@ -319,7 +486,7 @@ public class PlayGround extends Actor  {
                     originY = ThreadLocalRandom.current().nextInt(0, numberOfCellsInRow);
                 }
                 if(boats[b].getSize()==1){
-                    checkSurroundingHorizontal(originX,originY,1);
+                    checkSurroundingHorizontal(originX,originY,1, boats[b]);
                     break;
                 }
                 direction = ThreadLocalRandom.current().nextInt(0, 2);
@@ -340,7 +507,7 @@ public class PlayGround extends Actor  {
                             originY=j+1;
                     }
                     if(count==0){
-                        if(checkSurroundingHorizontal(originX,originY,boats[b].getSize())){
+                        if(checkSurroundingHorizontal(originX,originY,boats[b].getSize(), boats[b])){
                             canLocate=true;
                         }
                     }
@@ -361,7 +528,7 @@ public class PlayGround extends Actor  {
                             originX=i-1;
                     }
                     if(count==0){
-                        if(checkSurroundingVertical(originX,originY,boats[b].getSize())){
+                        if(checkSurroundingVertical(originX,originY,boats[b].getSize(), boats[b])){
                             canLocate=true;
                         }
                     }
@@ -610,7 +777,7 @@ public class PlayGround extends Actor  {
                     return false;
                 }
             }
-            if(!checkSurroundingHorizontal(x,y,changedBoat.getSize())){
+            if(!checkSurroundingHorizontal(x,y,changedBoat.getSize(),changedBoat)){
                 System.out.println("checkIfCanLocateUserBoat4");
                 return false;
             }
@@ -621,7 +788,7 @@ public class PlayGround extends Actor  {
                     return false;
                 }
             }
-            if(!checkSurroundingVertical(x,y,changedBoat.getSize())){
+            if(!checkSurroundingVertical(x,y,changedBoat.getSize(),changedBoat)){
                 System.out.println("checkIfCanLocateUserBoat6");
                 return false;
             }
@@ -661,6 +828,7 @@ public class PlayGround extends Actor  {
         System.out.print("  setTakenFALSE: ");
         for (int i = 0; i < changedBoat.getSize(); i++) {
             cellsGround[originX][originY+i].setIsTaken(false);
+            cellsGround[originX][originY+i].setBoat(null);
             System.out.print(cellsGround[originX][originY+i].getName() + " ");
         }
         System.out.print("  setEmptyFALSE: ");
@@ -703,6 +871,7 @@ public class PlayGround extends Actor  {
         System.out.print("  setTakenFALSE: ");
         for (int i = 0; i < changedBoat.getSize(); i++) {
             cellsGround[originX - i][originY].setIsTaken(false);
+            cellsGround[originX-i][originY].setBoat(null);
             System.out.print(cellsGround[originX-i][originY].getName() + " ");
         }
         System.out.print("  setEmptyFALSE: ");
@@ -750,9 +919,9 @@ public class PlayGround extends Actor  {
         if(previous!=null){
             System.out.println("Add old Location");
             if(changedBoat.getDirection()==0)
-                checkSurroundingHorizontal(x,y, changedBoat.getSize());
+                checkSurroundingHorizontal(x,y, changedBoat.getSize(),changedBoat);
             else
-                checkSurroundingVertical(x,y,changedBoat.getSize());
+                checkSurroundingVertical(x,y,changedBoat.getSize(),changedBoat);
         }else{
             System.out.println("Old cell not found");
         }

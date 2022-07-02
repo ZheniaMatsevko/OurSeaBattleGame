@@ -15,11 +15,20 @@ public class Cell extends Image {
     private boolean isTaken;
     private boolean shouldBeEmpty;
     private boolean isShot;
+    private Boat boat;
     @Override
     public void draw(Batch batch, float parentAlpha) {
         batch.setColor(this.getColor());
         ((TextureRegionDrawable)getDrawable()).draw(batch,getX(),getY(),getOriginX(),getOriginY(),getWidth(),getHeight(),getScaleX(),getScaleY(),getRotation());
     }
+    public Boat getBoat(){
+        return boat;
+    }
+
+    public void setBoat(Boat boat) {
+        this.boat = boat;
+    }
+
     public void setIsTaken(boolean taken){
         this.isTaken = taken;
     }
@@ -50,7 +59,7 @@ public class Cell extends Image {
     }
     public void changeColor(){
         ColorAction colorAction = new ColorAction();
-        colorAction.setEndColor(Color.NAVY);
+        colorAction.setEndColor(Color.GRAY);
         Cell.this.addAction(colorAction);
     }
 }

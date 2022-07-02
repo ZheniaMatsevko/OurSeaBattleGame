@@ -49,7 +49,7 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
         parameter.borderColor = Color.GRAY;
         font = generator.generateFont(parameter);
         stage = new Stage(new ScreenViewport());
-        playGround = new PlayGround(10,10);
+        playGround = new PlayGround(10,10, Gdx.graphics.getWidth()/4, Gdx.graphics.getHeight()-50);
         batch = new SpriteBatch();
         sprite = new Sprite(new Texture(Gdx.files.internal("putships.jpg")));
         sprite.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -112,6 +112,7 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
         Actor hitActor2 = stage.hit(coord.x,coord.y,true);
         if(hitActor2==playButton.getImage()){
             System.out.println("Play button");
+            game.setScreen(new MainGameScreen(game,playGround));
         }else if(hitActor2==putAgainButton.getImage()){
             System.out.println("AGAIN button");
             playGround.cleanField();
