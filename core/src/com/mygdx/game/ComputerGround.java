@@ -96,10 +96,6 @@ public class ComputerGround extends Actor {
                     }else{
                         damagedCells.clear();
                     }
-                    if(direction==0 || direction==1)
-                        damagedDirection=0;
-                    else
-                        damagedDirection=1;
                     damagedDirection=direction;
                     isStrike = true;
                 }else{

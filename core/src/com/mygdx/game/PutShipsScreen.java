@@ -134,8 +134,6 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
             if(hitActor.getClass()==Cell.class){
                 playGround.setIsBoatChanged(0);
             }
-            //Cell ace = (Cell) playGround.getGroup().findActor(hitActor.getName());
-            //ace.changeColor();
         }
         return true;
     }
@@ -153,14 +151,22 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         Vector2 coord = stage.screenToStageCoordinates(new Vector2((float)screenX,(float) screenY));
         Actor hitActor = playGround.getStage().hit(coord.x,coord.y,true);
-        if(hitActor==null)
+        if(hitActor==null && playGround.isBoatChanged()==1) {
+            System.out.println("playGround.isBoatChanged()==1");
+            playGround.putShipsOnItsPlaces();
+            playGround.setIsBoatChanged(0);
+        }
+        else if(hitActor==null)
             System.out.println("Touch dragged actor not found");
         else {
             if(hitActor.getClass()==Cell.class){
                 playGround.setCellDragged(true);
+                if(playGround.isBoatChanged()==1){
+                    playGround.putShipsOnItsPlaces();
+                    playGround.setIsBoatChanged(0);
+                }
             }
             if(!playGround.isCellDragged() && hitActor.getClass()==Boat.class){
-
                 playGround.setIsBoatChanged(1);
                 playGround.setChangedBoat((Boat)hitActor);
                 hitActor.setZIndex(200);
