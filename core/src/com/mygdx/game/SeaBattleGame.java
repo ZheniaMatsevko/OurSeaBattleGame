@@ -11,14 +11,12 @@ public class SeaBattleGame extends Game {
     PutShipsScreen putShipsScreen;
     @Override
     public void create () {
-        mainMenu = new MainMenu(this);
-        putShipsScreen = new PutShipsScreen(this);
         shapeRenderer = new ShapeRenderer();
         //InputMultiplexer multiplexer = new InputMultiplexer();
         //multiplexer.addProcessor(mainMenu.getStage()); // set stage as first input processor
         //multiplexer.addProcessor(putShipsScreen);  // set your game input precessor as second
         //Gdx.input.setInputProcessor(multiplexer);
-        setScreen(putShipsScreen);
+        setScreen(new MainMenu(this));
     }
     public void setPutScreen(){
 
