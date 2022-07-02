@@ -111,7 +111,7 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
                         if(computerGround.getGround().checkShotCell((Cell)hitActor2)){
                             computerGround.getGround().killCell((Cell)hitActor2);
                         }else{
-                            ((Cell) hitActor2).changeColor();
+                            ((Cell) hitActor2).changeColor(Color.GRAY);
                             ((Cell) hitActor2).setShot(true);
                             whoIsNext=1;
                         }
@@ -135,7 +135,37 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
-        return false;
+        Vector2 coord = stage.screenToStageCoordinates(new Vector2((float)screenX,(float) screenY));
+        Actor hitActor2 = computerGround.getGround().getStage().hit(coord.x,coord.y,true);
+        if(hitActor2==null) {
+            if(computerGround.getGround().getPaintedCell()!=null && !computerGround.getGround().getPaintedCell().isShot()){
+                if(computerGround.getGround().getPaintedCell().getColor()!=Color.GRAY) {
+                    System.out.println(computerGround.getGround().getPaintedCell().getName() + " " + computerGround.getGround().getPaintedCell().getColor());
+                    computerGround.getGround().getPaintedCell().changeColor(Color.WHITE);
+                }
+                computerGround.getGround().setPaintedCell(null);
+            }
+            System.out.println("Comp actor not found");
+        }
+        else {
+            if(whoIsNext==0){
+                System.out.println("yes" + hitActor2.getName() + " " + hitActor2.getX()+" " + hitActor2.getY() + " class: " + hitActor2.getClass());
+                if(hitActor2.getClass()==Cell.class){
+                    if(computerGround.getGround().getPaintedCell()==null && !((Cell) hitActor2).isShot()) {
+                        ((Cell) hitActor2).changeColor(Color.GREEN);
+                        computerGround.getGround().setPaintedCell((Cell)hitActor2);
+                    }else if(!((Cell) hitActor2).equals(computerGround.getGround().getPaintedCell())&& !((Cell) hitActor2).isShot()){
+                        if(!computerGround.getGround().getPaintedCell().isShot()) {
+                            System.out.println(computerGround.getGround().getPaintedCell().getName() + " " + computerGround.getGround().getPaintedCell().getColor());
+                            computerGround.getGround().getPaintedCell().changeColor(Color.WHITE);
+                        }
+                        ((Cell) hitActor2).changeColor(Color.GREEN);
+                        computerGround.getGround().setPaintedCell((Cell)hitActor2);
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     @Override

@@ -57,9 +57,9 @@ public class Cell extends Image {
         setBounds(getX(), getY(),getWidth(),getHeight());
         setTouchable(Touchable.enabled);
     }
-    public void changeColor(){
+    public void changeColor(Color color){
         ColorAction colorAction = new ColorAction();
-        colorAction.setEndColor(Color.GRAY);
+        colorAction.setEndColor(color);
         Cell.this.addAction(colorAction);
     }
 }

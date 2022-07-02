@@ -27,8 +27,11 @@ public class PlayGround extends Actor  {
     private float previousY;
     private boolean isCellDragged;
     private boolean isBoatsVisible;
+    private Cell paintedCell;
+
 
     public PlayGround(int numberOfCellsInRow, int numberOfBoats, int xC, int yC){
+        paintedCell = null;
         isBoatsVisible=true;
         isBoatChanged = 0;
         this.numberOfCellsInRow = numberOfCellsInRow;
@@ -137,6 +140,15 @@ public class PlayGround extends Actor  {
             return false;
         return true;
     }
+
+    public Cell getPaintedCell() {
+        return paintedCell;
+    }
+
+    public void setPaintedCell(Cell paintedCell) {
+        this.paintedCell = paintedCell;
+    }
+
     public boolean killCell(Cell cell){
         cell.setShot(true);
         System.out.println("Shot: "+cell.getName());
@@ -227,7 +239,7 @@ public class PlayGround extends Actor  {
             emptyCells.add(cellsGround[originX][originY + boatSize]);
         for(Cell cell: emptyCells){
             cell.setShot(true);
-            cell.changeColor();
+            cell.changeColor(Color.GRAY);
         }
     }
     private void shotSurroundingVertical(int originX, int originY, int boatSize) {
@@ -253,7 +265,7 @@ public class PlayGround extends Actor  {
             emptyCells.add(cellsGround[originX - boatSize][originY]);
         for(Cell cell: emptyCells){
             cell.setShot(true);
-            cell.changeColor();
+            cell.changeColor(Color.GRAY);
         }
     }
     private boolean checkSurroundingHorizontal(int originX, int originY, int boatSize, Boat boat){
