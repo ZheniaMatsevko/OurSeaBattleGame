@@ -28,12 +28,14 @@ public class PlayGround extends Actor  {
     private boolean isCellDragged;
     private boolean isBoatsVisible;
     private Cell paintedCell;
+    private int score;
 
 
     public PlayGround(int numberOfCellsInRow, int numberOfBoats, int xC, int yC){
         paintedCell = null;
         isBoatsVisible=true;
         isBoatChanged = 0;
+        score = 0;
         this.numberOfCellsInRow = numberOfCellsInRow;
         setBounds(0,Gdx.graphics.getHeight(),Gdx.graphics.getWidth(),Gdx.graphics.getHeight()-50);
         setTouchable(Touchable.enabled);
@@ -153,6 +155,7 @@ public class PlayGround extends Actor  {
         cell.setShot(true);
         System.out.println("Shot: "+cell.getName());
         if(cell.getBoat().strike()){
+            score++;
             System.out.println("Killed");
             cell.getBoat().setVisible(true);
             Image cross = new Image(new Texture(Gdx.files.internal("x.png")));
@@ -183,6 +186,9 @@ public class PlayGround extends Actor  {
 
     }
 
+    public int getScore() {
+        return score;
+    }
 
     public void setCellDragged(boolean cellDragged) {
         isCellDragged = cellDragged;

@@ -28,8 +28,7 @@ public class MainMenu extends ScreenAdapter implements InputProcessor{
     private Stage stage;
     private Skin skin;
 
-    private Table table;
-    private TextButton singleModeButton;
+    private ImageButton startButton;
     private ImageButton settingsButton;
     private ImageButton helpButton;
     private BitmapFont font;
@@ -38,34 +37,32 @@ public class MainMenu extends ScreenAdapter implements InputProcessor{
         this.game = game;
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Zyana.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 85;
-        parameter.borderWidth = 1;
+        parameter.size = 105;
+        parameter.borderWidth = 2;
         parameter.borderColor = Color.GRAY;
         font = generator.generateFont(parameter);
         skin = new Skin(Gdx.files.internal("uiskin.json"));
         stage = new Stage(new ScreenViewport());
-        table = new Table();
-        table.setWidth(stage.getWidth());
-        table.align(Align.center|Align.top);
-        table.setPosition(0,Gdx.graphics.getHeight()-150);
-        singleModeButton = new TextButton("Single mode",skin);
-        singleModeButton.getLabel().setFontScale(2,2);
-        Texture myTexture = new Texture(Gdx.files.internal("Settings.png"));
-        TextureRegion myTextureRegion = new TextureRegion(myTexture);
-        TextureRegionDrawable myTexRegionDrawable = new TextureRegionDrawable(myTextureRegion);
-        settingsButton = new ImageButton(myTexRegionDrawable);
-        settingsButton.setPosition(10,Gdx.graphics.getHeight()-settingsButton.getHeight()-5);
-        Texture myTexture2 = new Texture(Gdx.files.internal("q1.png"));
+        Texture myTexture3 = new Texture(Gdx.files.internal("play3.png"));
+        TextureRegion myTextureRegion3 = new TextureRegion(myTexture3);
+        TextureRegionDrawable myTexRegionDrawable3 = new TextureRegionDrawable(myTextureRegion3);
+        startButton = new ImageButton(myTexRegionDrawable3);
+        startButton.setPosition(Gdx.graphics.getWidth()/3-80,Gdx.graphics.getHeight()/3-50);
+        Texture myTexture2 = new Texture(Gdx.files.internal("help6.png"));
         TextureRegion myTextureRegion2 = new TextureRegion(myTexture2);
         TextureRegionDrawable myTexRegionDrawable2 = new TextureRegionDrawable(myTextureRegion2);
         helpButton = new ImageButton(myTexRegionDrawable2);
-        helpButton.setPosition(settingsButton.getWidth()+20,settingsButton.getY());
-        table.padTop(100);
-        table.add(singleModeButton).padBottom(15);
-        table.row();
+        helpButton.setPosition(startButton.getWidth()+startButton.getX()+50,startButton.getY());
+        Texture myTexture = new Texture(Gdx.files.internal("set3.png"));
+        TextureRegion myTextureRegion = new TextureRegion(myTexture);
+        TextureRegionDrawable myTexRegionDrawable = new TextureRegionDrawable(myTextureRegion);
+        settingsButton = new ImageButton(myTexRegionDrawable);
+        settingsButton.setPosition(helpButton.getX()+helpButton.getWidth()+50,startButton.getY()+10);
+
+
         stage.addActor(settingsButton);
         stage.addActor(helpButton);
-        stage.addActor(table);
+        stage.addActor(startButton);
         batch = new SpriteBatch();
         sprite = new Sprite(new Texture(Gdx.files.internal("sea.png")));
         sprite.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -106,20 +103,15 @@ public class MainMenu extends ScreenAdapter implements InputProcessor{
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         Vector2 coord = stage.screenToStageCoordinates(new Vector2((float)screenX,(float) screenY));
         Actor hitActor = stage.hit(coord.x,coord.y,true);
-        if(hitActor==singleModeButton.getLabel()){
+        if(hitActor==startButton.getImage()){
             System.out.println("Hit " + hitActor.getClass());
-            singleModeButton.setColor(Color.RED);
+            game.setScreen(new PutShipsScreen(game));
         }
         return true;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        Vector2 coord = stage.screenToStageCoordinates(new Vector2((float)screenX,(float) screenY));
-        Actor hitActor = stage.hit(coord.x,coord.y,true);
-        if(hitActor==singleModeButton.getLabel()){
-            game.setScreen(new PutShipsScreen(game));
-        }
         return true;
     }
 

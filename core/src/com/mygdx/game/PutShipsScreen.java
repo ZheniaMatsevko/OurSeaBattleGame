@@ -49,15 +49,15 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
         parameter.borderColor = Color.GRAY;
         font = generator.generateFont(parameter);
         stage = new Stage(new ScreenViewport());
-        playGround = new PlayGround(10,10, Gdx.graphics.getWidth()/4, Gdx.graphics.getHeight()-50);
+        playGround = new PlayGround(10,10, Gdx.graphics.getWidth()/10, Gdx.graphics.getHeight()-100);
         batch = new SpriteBatch();
-        sprite = new Sprite(new Texture(Gdx.files.internal("putships.jpg")));
+        sprite = new Sprite(new Texture(Gdx.files.internal("back4.jpg")));
         sprite.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Texture myTexture = new Texture(Gdx.files.internal("again.png"));
         TextureRegion myTextureRegion = new TextureRegion(myTexture);
         TextureRegionDrawable myTexRegionDrawable = new TextureRegionDrawable(myTextureRegion);
         putAgainButton = new ImageButton(myTexRegionDrawable);
-        putAgainButton.setPosition(Gdx.graphics.getWidth()/3*2+30,Gdx.graphics.getHeight()-putAgainButton.getHeight()-100);
+        putAgainButton.setPosition(Gdx.graphics.getWidth()/9*4+40,Gdx.graphics.getHeight()-putAgainButton.getHeight()-200);
         Texture myTexture1 = new Texture(Gdx.files.internal("start.png"));
         TextureRegion myTextureRegion1 = new TextureRegion(myTexture1);
         TextureRegionDrawable myTexRegionDrawable1 = new TextureRegionDrawable(myTextureRegion1);
@@ -70,7 +70,7 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
             }
         });
         putAgainButton.setName("Again");
-        playButton.setPosition(Gdx.graphics.getWidth()/3*2,putAgainButton.getY()-putAgainButton.getHeight()-20);
+        playButton.setPosition(Gdx.graphics.getWidth()/9*4,putAgainButton.getY()-putAgainButton.getHeight());
         stage.addActor(putAgainButton);
         stage.addActor(playGround);
         stage.addActor(playButton);
@@ -84,7 +84,7 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
         ScreenUtils.clear(0, 0, 0, 1);
         batch.begin();
         sprite.draw(batch);
-        font.draw(batch,text,Gdx.graphics.getWidth()/4+25,90);
+        font.draw(batch,text,Gdx.graphics.getWidth()/9+10,150);
         batch.end();
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
