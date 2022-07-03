@@ -150,6 +150,12 @@ public class PlayGround extends Actor  {
     public void setPaintedCell(Cell paintedCell) {
         this.paintedCell = paintedCell;
     }
+    public String getCellName(Cell cell){
+        String name="";
+        String letters = "ABCDEFGHIJ";
+        name+=letters.charAt(getJ(cell)) + String.valueOf(getI(cell)+1);
+        return name;
+    }
 
     public boolean killCell(Cell cell){
         cell.setShot(true);

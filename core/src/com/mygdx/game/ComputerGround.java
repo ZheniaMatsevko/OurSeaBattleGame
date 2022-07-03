@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -35,7 +36,7 @@ public class ComputerGround extends Actor {
         return isStrike;
     }
 
-    public void shoot(){
+    public void shoot(Label messageLabel){
         int originX, originY;
         if(damagedCells.isEmpty()){
             System.out.println("damagedCells.isEmpty()");
@@ -49,12 +50,16 @@ public class ComputerGround extends Actor {
             if(userGround.checkShotCell(cell)){
                 if(!userGround.killCell(cell)){
                     damagedCells.add(cell);
+                    messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and damaged the ship!");
+                }else{
+                    messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and killed the ship!");
                 }
                 isStrike = true;
             }else{
                 cell.changeColor(Color.GRAY);
                 cell.setShot(true);
                 isStrike = false;
+                messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and missed.");
             }
         }else{
             boolean shouldRepeat = true;
@@ -94,8 +99,10 @@ public class ComputerGround extends Actor {
                 if(userGround.checkShotCell(cell)){
                     if(!userGround.killCell(cell)){
                         damagedCells.add(cell);
+                        messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and damaged the ship!");
                     }else{
                         damagedCells.clear();
+                        messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and killed the ship!");
                     }
                     damagedDirection=direction;
                     isStrike = true;
@@ -103,6 +110,7 @@ public class ComputerGround extends Actor {
                     cell.changeColor(Color.GRAY);
                     cell.setShot(true);
                     isStrike = false;
+                    messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and missed.");
                 }
             }else{
                 if(damagedDirection<2){
@@ -112,28 +120,34 @@ public class ComputerGround extends Actor {
                         if(userGround.checkShotCell(cell)){
                             if(!userGround.killCell(cell)){
                                 damagedCells.add(cell);
+                                messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and damaged the ship!");
                             }else{
                                 damagedCells.clear();
+                                messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and killed the ship!");
                             }
                             isStrike = true;
                         }else{
                             cell.changeColor(Color.GRAY);
                             cell.setShot(true);
                             isStrike = false;
+                            messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and missed.");
                         }
                     }else if(damagedDirection==0){
                        cell = userGround.getCell(userGround.getI(damagedCells.get(0)),userGround.getJ(damagedCells.get(0))-1);
                         if(userGround.checkShotCell(cell)){
                             if(!userGround.killCell(cell)){
                                 damagedCells.add(cell);
+                                messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and damaged the ship!");
                             }else{
                                 damagedCells.clear();
+                                messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and killed the ship!");
                             }
                             isStrike = true;
                         }else{
                             cell.changeColor(Color.GRAY);
                             cell.setShot(true);
                             isStrike = false;
+                            messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and missed.");
                         }
                         damagedDirection=1;
                     }else if(damagedDirection==1 && userGround.getJ(damagedCells.get(damagedCells.size()-1))-1>=0 && !userGround.getCell(userGround.getI(damagedCells.get(damagedCells.size()-1)),userGround.getJ(damagedCells.get(damagedCells.size()-1))-1).isShot()){
@@ -142,14 +156,17 @@ public class ComputerGround extends Actor {
                         if(userGround.checkShotCell(cell)){
                             if(!userGround.killCell(cell)){
                                 damagedCells.add(cell);
+                                messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and damaged the ship!");
                             }else{
                                 damagedCells.clear();
+                                messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and killed the ship!");
                             }
                             isStrike = true;
                         }else{
                             cell.changeColor(Color.GRAY);
                             cell.setShot(true);
                             isStrike = false;
+                            messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and missed.");
                         }
                     }else if(damagedDirection==1){
                         cell = userGround.getCell(userGround.getI(damagedCells.get(0)),userGround.getJ(damagedCells.get(0))+1);
@@ -157,14 +174,17 @@ public class ComputerGround extends Actor {
                         if(userGround.checkShotCell(cell)){
                             if(!userGround.killCell(cell)){
                                 damagedCells.add(cell);
+                                messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and damaged the ship!");
                             }else{
                                 damagedCells.clear();
+                                messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and killed the ship!");
                             }
                             isStrike = true;
                         }else{
                             cell.changeColor(Color.GRAY);
                             cell.setShot(true);
                             isStrike = false;
+                            messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and missed.");
                         }
                         damagedDirection=0;
                     }
@@ -175,14 +195,17 @@ public class ComputerGround extends Actor {
                         if(userGround.checkShotCell(cell)){
                             if(!userGround.killCell(cell)){
                                 damagedCells.add(cell);
+                                messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and damaged the ship!");
                             }else{
                                 damagedCells.clear();
+                                messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and killed the ship!");
                             }
                             isStrike = true;
                         }else{
                             cell.changeColor(Color.GRAY);
                             cell.setShot(true);
                             isStrike = false;
+                            messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and missed.");
                         }
                     }else if(damagedDirection==2){
                         cell = userGround.getCell(userGround.getI(damagedCells.get(0))-1,userGround.getJ(damagedCells.get(0)));
@@ -190,14 +213,17 @@ public class ComputerGround extends Actor {
                         if(userGround.checkShotCell(cell)){
                             if(!userGround.killCell(cell)){
                                 damagedCells.add(cell);
+                                messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and damaged the ship!");
                             }else{
                                 damagedCells.clear();
+                                messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and killed the ship!");
                             }
                             isStrike = true;
                         }else{
                             cell.changeColor(Color.GRAY);
                             cell.setShot(true);
                             isStrike = false;
+                            messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and missed.");
                         }
                         damagedDirection=3;
                     }else if(damagedDirection==3 && userGround.getI(damagedCells.get(damagedCells.size()-1))-1 >=0 &&!userGround.getCell(userGround.getI(damagedCells.get(damagedCells.size()-1))-1,userGround.getJ(damagedCells.get(damagedCells.size()-1))).isShot()){
@@ -206,14 +232,17 @@ public class ComputerGround extends Actor {
                         if(userGround.checkShotCell(cell)){
                             if(!userGround.killCell(cell)){
                                 damagedCells.add(cell);
+                                messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and damaged the ship!");
                             }else{
                                 damagedCells.clear();
+                                messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and killed the ship!");
                             }
                             isStrike = true;
                         }else{
                             cell.changeColor(Color.GRAY);
                             cell.setShot(true);
                             isStrike = false;
+                            messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and missed.");
                         }
                     }else if(damagedDirection==3){
                         cell = userGround.getCell(userGround.getI(damagedCells.get(0))+1,userGround.getJ(damagedCells.get(0)));
@@ -221,14 +250,17 @@ public class ComputerGround extends Actor {
                         if(userGround.checkShotCell(cell)){
                             if(!userGround.killCell(cell)){
                                 damagedCells.add(cell);
+                                messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and damaged the ship!");
                             }else{
                                 damagedCells.clear();
+                                messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and killed the ship!");
                             }
                             isStrike = true;
                         }else{
                             cell.changeColor(Color.GRAY);
                             cell.setShot(true);
                             isStrike = false;
+                            messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and missed.");
                         }
                         damagedDirection=2;
                     }

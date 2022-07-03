@@ -58,8 +58,6 @@ public class MainMenu extends ScreenAdapter implements InputProcessor{
         TextureRegionDrawable myTexRegionDrawable = new TextureRegionDrawable(myTextureRegion);
         settingsButton = new ImageButton(myTexRegionDrawable);
         settingsButton.setPosition(helpButton.getX()+helpButton.getWidth()+50,startButton.getY()+10);
-
-
         stage.addActor(settingsButton);
         stage.addActor(helpButton);
         stage.addActor(startButton);

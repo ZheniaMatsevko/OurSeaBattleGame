@@ -64,7 +64,7 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
         labelColor.setColor(Color.BLACK);
         labelColor.fill();
         turnLabel.getStyle().background = new Image(new Texture(labelColor)).getDrawable();
-        FreeTypeFontGenerator generator2 = new FreeTypeFontGenerator(Gdx.files.internal("Zyana.ttf"));
+        FreeTypeFontGenerator generator2 = new FreeTypeFontGenerator(Gdx.files.internal("font2.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter2 = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter2.size = 25;
         parameter2.color = Color.BLACK;
@@ -73,14 +73,13 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
         BitmapFont font2 = generator2.generateFont(parameter2);
         Label.LabelStyle style2 = new Label.LabelStyle();
         style2.font = font2;
-        messageLabel = new Label("     Your turn",style2);
+        messageLabel = new Label("     Make your first step!",style2);
         messageLabel.setPosition(0,0);
         messageLabel.setSize(Gdx.graphics.getWidth(),40);
         Pixmap labelColor2 = new Pixmap((int) messageLabel.getWidth(),(int) messageLabel.getHeight(), Pixmap.Format.RGB888);
         labelColor2.setColor(Color.WHITE);
         labelColor2.fill();
         messageLabel.getStyle().background = new Image(new Texture(labelColor2)).getDrawable();
-
         stage = new Stage(new ScreenViewport());
         computerGround = new ComputerGround(10,10, Gdx.graphics.getWidth()/3 + 100,Gdx.graphics.getHeight()-100, ground);
         userGround = ground;
@@ -128,7 +127,7 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
             Timer.schedule(new Timer.Task(){
                 @Override
                 public void run() {
-                    computerGround.shoot();
+                    computerGround.shoot(messageLabel);
                     if(computerGround.isStrike())
                         whoIsNext=1;
                     else {
@@ -191,10 +190,16 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
                 if(hitActor2.getClass()==Cell.class){
                     if(!((Cell) hitActor2).isShot()){
                         if(computerGround.getGround().checkShotCell((Cell)hitActor2)){
-                            computerGround.getGround().killCell((Cell)hitActor2);
+                            if(computerGround.getGround().killCell((Cell)hitActor2)){
+                                messageLabel.setText("      User shot at " + computerGround.getGround().getCellName((Cell)hitActor2) + " and killed the ship!");
+                            }else{
+                                messageLabel.setText("      User shot at " + computerGround.getGround().getCellName((Cell)hitActor2) + " and damaged the ship!");
+                            }
+                            ((Cell) hitActor2).changeColor(Color.GREEN);
                         }else{
                             ((Cell) hitActor2).changeColor(Color.GRAY);
                             ((Cell) hitActor2).setShot(true);
+                            messageLabel.setText("      User shot at " + computerGround.getGround().getCellName((Cell)hitActor2) + " and missed.");
                             whoIsNext=1;
                         }
                     }
