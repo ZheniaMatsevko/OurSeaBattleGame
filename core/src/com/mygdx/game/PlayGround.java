@@ -89,6 +89,9 @@ public class PlayGround extends Actor  {
         else
             changedBoat.setPosition(changedBoat.getStartCell().getX()+getCellWidth(),changedBoat.getStartCell().getY());
     }
+    public void setScore(int score){
+        this.score = score;
+    }
     public void putShipsOnItsPlaces(){
         for(int i=0;i<numberOfCellsInRow;i++){
             if(boats[i].getDirection()==0){
