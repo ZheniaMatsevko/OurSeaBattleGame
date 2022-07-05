@@ -178,7 +178,7 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
         if(checkForWin()!=0){
             game.setScreen(new EndScreen(game,checkForWin(),computerGround.getGround().getScore(),level));
         }
-        float delay = 0;
+        float delay = 2;
         if(pauseDialog.isVisible()==false){
             if(whoIsNext==1){
                 whoIsNext=3;
