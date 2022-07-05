@@ -29,11 +29,12 @@ public class PlayGround extends Actor  {
     private boolean isBoatsVisible;
     private Cell paintedCell;
     private int score;
-
+    private Cell[] radaredCells;
 
     public PlayGround(int numberOfCellsInRow, int numberOfBoats, int xC, int yC){
         paintedCell = null;
         isBoatsVisible=true;
+        radaredCells = null;
         isBoatChanged = 0;
         score = 0;
         this.numberOfCellsInRow = numberOfCellsInRow;
@@ -83,6 +84,24 @@ public class PlayGround extends Actor  {
         putRandomBoats();
         isCellDragged = false;
     }
+    public void setRadaredCells(Cell[] cells){
+        if(cells==null)
+            radaredCells=null;
+        else{
+            this.radaredCells = new Cell[cells.length];
+            for(int i=0;i<cells.length;i++){
+                radaredCells[i] = cells[i];
+            }
+        }
+    }
+
+    public Cell getMainRadaredCell(){
+        return radaredCells[0];
+    }
+    public Cell[] getRadaredCells() {
+        return radaredCells;
+    }
+
     public void returnChangedBoat(){
         if(changedBoat.getDirection()==0)
             changedBoat.setPosition(changedBoat.getStartCell().getX(),changedBoat.getStartCell().getY());

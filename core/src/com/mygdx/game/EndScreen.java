@@ -58,7 +58,7 @@ public class EndScreen extends ScreenAdapter implements InputProcessor {
         menu.setPosition(20,Gdx.graphics.getHeight()-menu.getHeight()-20);
         stage.addActor(menu);
         if(whoWin==1){
-            level++;
+            this.level++;
             sprite = new Sprite(new Texture(Gdx.files.internal("win8.jpg")));
             stage.addActor(victory);
             stage.addActor(continueImage);

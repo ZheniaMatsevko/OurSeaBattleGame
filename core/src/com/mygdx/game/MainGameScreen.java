@@ -24,6 +24,7 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
     private PlayGround userGround;
     private SeaBattleGame game;
     private BitmapFont font;
+    private BitmapFont bigFont;
     private BitmapFont fontNumbers;
     private Stage stage;
     private SpriteBatch batch;
@@ -38,14 +39,21 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
     private int numberOfRadars;
     private Skin skin;
     private PauseDialog pauseDialog;
+    private Image radar;
+    private Image bomb;
+    private int bonusChosen;
 
     public MainGameScreen(SeaBattleGame game, PlayGround ground, int level, int numberOfBombs, int numberOfRadars) {
-        skin = new Skin(Gdx.files.internal("freezing-ui.json"));
+        skin = new Skin(Gdx.files.internal("star-soldier-ui.json"));
         this.numberOfBombs=numberOfBombs;
         this.numberOfRadars = numberOfRadars;
         this.level = level;
         whoIsNext=0;
         this.game = game;
+        radar = new Image(new Texture(Gdx.files.internal("radar2.png")));
+        radar.setPosition(Gdx.graphics.getWidth()-radar.getWidth()-60, Gdx.graphics.getHeight()-radar.getHeight()-120);
+        bomb = new Image(new Texture(Gdx.files.internal("bomb.png")));
+        bomb.setPosition(radar.getX(), radar.getY()-bomb.getHeight()-20);
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("ukr.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 30;
@@ -53,6 +61,13 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
         parameter.borderWidth = 3;
         parameter.borderColor = Color.GRAY;
         font = generator.generateFont(parameter);
+        FreeTypeFontGenerator generator5 = new FreeTypeFontGenerator(Gdx.files.internal("Zyana.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter5 = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter5.size = 50;
+        parameter5.color = Color.BLACK;
+        parameter5.borderWidth = 3;
+        parameter5.borderColor = Color.GRAY;
+        bigFont = generator5.generateFont(parameter5);
         pause = new Image(new Texture("pause1.png"));
         pause.setPosition(Gdx.graphics.getWidth()-pause.getWidth()-15,Gdx.graphics.getHeight()-pause.getHeight()-15);
 
@@ -108,6 +123,14 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
         stage.addActor(turnLabel);
         stage.addActor(messageLabel);
         stage.addActor(pause);
+        if(level>1){
+            stage.addActor(bomb);
+            stage.addActor(radar);
+            if(numberOfBombs==0)
+                bomb.setColor(Color.GRAY);
+            if(numberOfRadars==0)
+                radar.setColor(Color.GRAY);
+        }
         pauseDialog = new PauseDialog("Pause",skin);
         pauseDialog.setVisible(false);
         stage.addActor(pauseDialog);
@@ -155,7 +178,7 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
         if(checkForWin()!=0){
             game.setScreen(new EndScreen(game,checkForWin(),computerGround.getGround().getScore(),level));
         }
-        float delay = 2;
+        float delay = 0;
         if(pauseDialog.isVisible()==false){
             if(whoIsNext==1){
                 whoIsNext=3;
@@ -176,6 +199,10 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
         }
         batch.begin();
         sprite.draw(batch);
+        if(level>1){
+            bigFont.draw(batch,numberOfRadars + "x",radar.getX()-80,radar.getY()+radar.getHeight()/2+20);
+            bigFont.draw(batch,numberOfBombs + "x",bomb.getX()-80,bomb.getY()+bomb.getHeight()/2);
+        }
         font.draw(batch,"Your field",userGround.getCell(0,2).getX()+10,Gdx.graphics.getHeight()-20);
         font.draw(batch,"Computer field",computerGround.getGround().getCell(0,2).getX()-25,Gdx.graphics.getHeight()-20);
         String letters = "ABCDEFGHIJ";
@@ -216,12 +243,12 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
         Vector2 coord = stage.screenToStageCoordinates(new Vector2((float)screenX,(float) screenY));
         Actor hitActor2 = computerGround.getGround().getStage().hit(coord.x,coord.y,true);
         Actor hitActor = stage.hit(coord.x,coord.y,true);
-        if(hitActor==pause){
+        if(hitActor==pause && bonusChosen==0){
             System.out.println("Pause");
             pauseDialog.setVisible(true);
             pauseDialog.setZIndex(200);
             pauseDialog.show(stage);
-        }else if(hitActor!=null && pauseDialog.isVisible()==true) {
+        }else if(hitActor!=null && pauseDialog.isVisible()==true && bonusChosen==0) {
             if(hitActor.getClass()==Label.class && ((Label)hitActor).getText().length==4){
                 game.setScreen(new MainMenu(game,level));
             }else if(hitActor.getClass()==Label.class && ((Label)hitActor).getText().length==7){
@@ -230,7 +257,39 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
                 pauseDialog.setVisible(false);
             }
         }
-        else if(hitActor2!=null){
+        else if(level>1 && hitActor==bomb && numberOfBombs>0 && bonusChosen==0){
+            bomb.setColor(Color.RED);
+            bonusChosen=2;
+        } else if(level>1 && hitActor==radar && numberOfRadars>0 && bonusChosen==0){
+            radar.setColor(Color.PINK);
+            bonusChosen=1;
+        }else if(bonusChosen==1&& hitActor==radar){
+            radar.setColor(Color.WHITE);
+            bonusChosen=0;
+        } else if(bonusChosen==2&& hitActor==bomb){
+            bomb.setColor(Color.WHITE);
+            bonusChosen=0;
+        }else if(hitActor2!=null && bonusChosen==1 && computerGround.getGround().getRadaredCells()!=null){
+            Cell[] cells = computerGround.getGround().getRadaredCells();
+            for(int i=0;i<cells.length;i++){
+                if(!cells[i].isShot()){
+                    if(cells[i].getIsTaken()) {
+                        cells[i].changeColor(Color.BLUE);
+                    }
+                    else {
+                        cells[i].changeColor(Color.PINK);
+                    }
+                }
+                cells[i].setRadared(true);
+            }
+            computerGround.getGround().setRadaredCells(null);
+            bonusChosen=0;
+            radar.setColor(Color.WHITE);
+            numberOfRadars--;
+            if(numberOfRadars==0)
+                radar.setColor(Color.GRAY);
+        }
+        else if(hitActor2!=null && bonusChosen==0){
             if(whoIsNext==0){
                 System.out.println("yes" + hitActor2.getName() + " " + hitActor2.getX()+" " + hitActor2.getY() + " class: " + hitActor2.getClass());
                 if(hitActor2.getClass()==Cell.class){
@@ -270,26 +329,119 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
     public boolean mouseMoved(int screenX, int screenY) {
         Vector2 coord = stage.screenToStageCoordinates(new Vector2((float)screenX,(float) screenY));
         Actor hitActor2 = computerGround.getGround().getStage().hit(coord.x,coord.y,true);
-        if(hitActor2==null) {
-            if(computerGround.getGround().getPaintedCell()!=null && !computerGround.getGround().getPaintedCell().isShot()){
-                if(computerGround.getGround().getPaintedCell().getColor()!=Color.GRAY) {
-                     computerGround.getGround().getPaintedCell().changeColor(Color.WHITE);
+        if(!pauseDialog.isVisible() && bonusChosen==0){
+            if(hitActor2==null) {
+                if(computerGround.getGround().getPaintedCell()!=null && !computerGround.getGround().getPaintedCell().isShot()){
+                    if(computerGround.getGround().getPaintedCell().getColor()!=Color.GRAY) {
+                        computerGround.getGround().getPaintedCell().changeColor(Color.WHITE);
+                    }
+                    computerGround.getGround().setPaintedCell(null);
                 }
-                computerGround.getGround().setPaintedCell(null);
+            }
+            else {
+                if(whoIsNext==0){
+                    if(hitActor2.getClass()==Cell.class){
+                        if(computerGround.getGround().getPaintedCell()==null && !((Cell) hitActor2).isShot()) {
+                            ((Cell) hitActor2).changeColor(Color.GREEN);
+                            computerGround.getGround().setPaintedCell((Cell)hitActor2);
+                        }else if(!((Cell) hitActor2).equals(computerGround.getGround().getPaintedCell())&& !((Cell) hitActor2).isShot()){
+                            if(!computerGround.getGround().getPaintedCell().isShot()) {
+                                if(computerGround.getGround().getPaintedCell().isRadared() && computerGround.getGround().getPaintedCell().getIsTaken()){
+                                    computerGround.getGround().getPaintedCell().changeColor(Color.BLUE);
+                                }else if(computerGround.getGround().getPaintedCell().isRadared()){
+                                    computerGround.getGround().getPaintedCell().changeColor(Color.PINK);
+                                }else{
+                                    computerGround.getGround().getPaintedCell().changeColor(Color.WHITE);
+                                }
+                            }
+                            ((Cell) hitActor2).changeColor(Color.GREEN);
+                            computerGround.getGround().setPaintedCell((Cell)hitActor2);
+                        }
+                    }
+                }
             }
         }
-        else {
-            if(whoIsNext==0){
+        else if(!pauseDialog.isVisible() && bonusChosen==1){
+            if(hitActor2==null) {
+                if(computerGround.getGround().getRadaredCells()!=null){
+                    Cell[] change = computerGround.getGround().getRadaredCells();
+                    for(int i=0;i<change.length;i++){
+                        if(!change[i].isShot())
+                            change[i].changeColor(Color.WHITE);
+                    }
+                    computerGround.getGround().setRadaredCells(null);
+                }
+            }
+            else {
                 if(hitActor2.getClass()==Cell.class){
-                    if(computerGround.getGround().getPaintedCell()==null && !((Cell) hitActor2).isShot()) {
-                        ((Cell) hitActor2).changeColor(Color.GREEN);
-                        computerGround.getGround().setPaintedCell((Cell)hitActor2);
-                    }else if(!((Cell) hitActor2).equals(computerGround.getGround().getPaintedCell())&& !((Cell) hitActor2).isShot()){
-                        if(!computerGround.getGround().getPaintedCell().isShot()) {
-                             computerGround.getGround().getPaintedCell().changeColor(Color.WHITE);
+                    if(computerGround.getGround().getRadaredCells()==null) {
+                        Cell[] cells = new Cell[4];
+                        cells[0] = (Cell)hitActor2;
+                        if(computerGround.getGround().getI(cells[0])==9 && computerGround.getGround().getJ(cells[0])==9){
+                            cells[1] = computerGround.getGround().getCell(8,9);
+                            cells[2] = computerGround.getGround().getCell(8,8);
+                            cells[3] = computerGround.getGround().getCell(9,8);
+                        }else if(computerGround.getGround().getI(cells[0])==0 && computerGround.getGround().getJ(cells[0])==9){
+                            cells[1] = computerGround.getGround().getCell(0,8);
+                            cells[2] = computerGround.getGround().getCell(1,8);
+                            cells[3] = computerGround.getGround().getCell(1,9);
+                        }else if(computerGround.getGround().getJ(cells[0])==9){
+                            cells[1] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0])-1,9);
+                            cells[2] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0]),8);
+                            cells[3] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0])-1,8);
+                        }else if(computerGround.getGround().getI(cells[0])==0){
+                            cells[1] = computerGround.getGround().getCell(0,computerGround.getGround().getJ(cells[0])+1);
+                            cells[2] = computerGround.getGround().getCell(1,computerGround.getGround().getJ(cells[0])+1);
+                            cells[3] = computerGround.getGround().getCell(1,computerGround.getGround().getJ(cells[0]));
+                        }else{
+                            cells[1] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0]),computerGround.getGround().getJ(cells[0])+1);
+                            cells[2] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0])-1,computerGround.getGround().getJ(cells[0])+1);
+                            cells[3] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0])-1,computerGround.getGround().getJ(cells[0]));
                         }
-                        ((Cell) hitActor2).changeColor(Color.GREEN);
-                        computerGround.getGround().setPaintedCell((Cell)hitActor2);
+                        for(int i=0;i<cells.length;i++){
+                            if(!cells[i].isShot())
+                                cells[i].changeColor(Color.RED);
+                        }
+                        computerGround.getGround().setRadaredCells(cells);
+                    }else if(!((Cell) hitActor2).equals(computerGround.getGround().getMainRadaredCell())){
+                        Cell[] change = computerGround.getGround().getRadaredCells();
+                        for(int i=0;i<change.length;i++){
+                            if(change[i].isRadared() && change[i].getIsTaken() && !change[i].isShot()){
+                                change[i].changeColor(Color.BLUE);
+                            }else if(change[i].isRadared() && !change[i].isShot()){
+                                change[i].changeColor(Color.PINK);
+                            }
+                            else if(!change[i].isShot())
+                                change[i].changeColor(Color.WHITE);
+                        }
+                        Cell[] cells = new Cell[4];
+                        cells[0] = (Cell)hitActor2;
+                        if(computerGround.getGround().getI(cells[0])==9 && computerGround.getGround().getJ(cells[0])==9){
+                            cells[1] = computerGround.getGround().getCell(8,9);
+                            cells[2] = computerGround.getGround().getCell(8,8);
+                            cells[3] = computerGround.getGround().getCell(9,8);
+                        }else if(computerGround.getGround().getI(cells[0])==0 && computerGround.getGround().getJ(cells[0])==9){
+                            cells[1] = computerGround.getGround().getCell(0,8);
+                            cells[2] = computerGround.getGround().getCell(1,8);
+                            cells[3] = computerGround.getGround().getCell(1,9);
+                        }else if(computerGround.getGround().getJ(cells[0])==9){
+                            cells[1] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0])-1,9);
+                            cells[2] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0]),8);
+                            cells[3] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0])-1,8);
+                        }else if(computerGround.getGround().getI(cells[0])==0){
+                            cells[1] = computerGround.getGround().getCell(0,computerGround.getGround().getJ(cells[0])+1);
+                            cells[2] = computerGround.getGround().getCell(1,computerGround.getGround().getJ(cells[0])+1);
+                            cells[3] = computerGround.getGround().getCell(1,computerGround.getGround().getJ(cells[0]));
+                        }else{
+                            cells[1] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0]),computerGround.getGround().getJ(cells[0])+1);
+                            cells[2] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0])-1,computerGround.getGround().getJ(cells[0])+1);
+                            cells[3] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0])-1,computerGround.getGround().getJ(cells[0]));
+                        }
+                        for(int i=0;i<cells.length;i++){
+                            if(!cells[i].isShot())
+                                cells[i].changeColor(Color.RED);
+                        }
+                        computerGround.getGround().setRadaredCells(cells);
                     }
                 }
             }

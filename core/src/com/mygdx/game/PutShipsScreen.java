@@ -230,7 +230,7 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
         Vector2 coord = stage.screenToStageCoordinates(new Vector2((float)screenX,(float) screenY));
         Actor hitActor = playGround.getStage().hit(coord.x,coord.y,true);
         Actor hitActor2 = stage.hit(coord.x,coord.y,true);
-        if(hitActor2.getClass()== Label.class && ((Label)hitActor2).getText().length==2){
+        if(hitActor2!=null && hitActor2.getClass()== Label.class && ((Label)hitActor2).getText().length==2){
             System.out.println(hitActor2);
             bombInfoDialog.setVisible(false);
             radarInfoDialog.setVisible(false);

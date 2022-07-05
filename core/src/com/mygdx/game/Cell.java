@@ -15,6 +15,7 @@ public class Cell extends Image {
     private boolean isTaken;
     private boolean shouldBeEmpty;
     private boolean isShot;
+    private boolean isRadared;
     private Boat boat;
     @Override
     public void draw(Batch batch, float parentAlpha) {
@@ -23,6 +24,14 @@ public class Cell extends Image {
     }
     public Boat getBoat(){
         return boat;
+    }
+
+    public boolean isRadared() {
+        return isRadared;
+    }
+
+    public void setRadared(boolean radared) {
+        isRadared = radared;
     }
 
     public void setBoat(Boat boat) {
