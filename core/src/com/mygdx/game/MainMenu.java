@@ -24,16 +24,16 @@ public class MainMenu extends ScreenAdapter implements InputProcessor{
     SeaBattleGame game;
     private SpriteBatch batch;
     private Sprite sprite;
-
     private Stage stage;
     private Skin skin;
-
+    private int level;
     private ImageButton startButton;
     private ImageButton settingsButton;
     private ImageButton helpButton;
     private BitmapFont font;
 
-    public MainMenu(final SeaBattleGame game) {
+    public MainMenu(final SeaBattleGame game, int level) {
+        this.level =level;
         this.game = game;
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Zyana.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -103,7 +103,7 @@ public class MainMenu extends ScreenAdapter implements InputProcessor{
         Actor hitActor = stage.hit(coord.x,coord.y,true);
         if(hitActor==startButton.getImage()){
             System.out.println("Hit " + hitActor.getClass());
-            game.setScreen(new PutShipsScreen(game));
+            game.setScreen(new PutShipsScreen(game,level));
         }
         return true;
     }

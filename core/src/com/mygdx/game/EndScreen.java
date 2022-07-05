@@ -31,7 +31,9 @@ public class EndScreen extends ScreenAdapter implements InputProcessor {
     private Image menu;
     private Image continueImage;
     private int score;
-    public EndScreen(SeaBattleGame game,int whoWin, int score){
+    private int level;
+    public EndScreen(SeaBattleGame game,int whoWin, int score, int level){
+        this.level = level;
         this.game = game;
         this.score = score;
         this.whoWin = whoWin;
@@ -56,6 +58,7 @@ public class EndScreen extends ScreenAdapter implements InputProcessor {
         menu.setPosition(20,Gdx.graphics.getHeight()-menu.getHeight()-20);
         stage.addActor(menu);
         if(whoWin==1){
+            level++;
             sprite = new Sprite(new Texture(Gdx.files.internal("win8.jpg")));
             stage.addActor(victory);
             stage.addActor(continueImage);
@@ -107,17 +110,17 @@ public class EndScreen extends ScreenAdapter implements InputProcessor {
         if(whoWin==1){
             if(hitActor==continueImage){
                 System.out.println("Hit " + hitActor.getClass());
-                game.setScreen(new PutShipsScreen(game));
+                game.setScreen(new PutShipsScreen(game,level));
             }
         }else{
             if(hitActor==restart){
                 System.out.println("Hit " + hitActor.getClass());
-                game.setScreen(new PutShipsScreen(game));
+                game.setScreen(new PutShipsScreen(game,level));
             }
         }
         if(hitActor==menu){
             System.out.println("Hit " + hitActor.getClass());
-            game.setScreen(new MainMenu(game));
+            game.setScreen(new MainMenu(game,level));
         }
         return true;
     }
@@ -134,8 +137,7 @@ public class EndScreen extends ScreenAdapter implements InputProcessor {
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
-        System.out.println("Hjhj");
-        return true;
+        return false;
     }
 
     @Override

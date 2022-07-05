@@ -13,10 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.Timer;
@@ -35,8 +32,18 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
     private int score;
     private Label turnLabel;
     private Label messageLabel;
+    private Image pause;
+    private int level;
+    private int numberOfBombs;
+    private int numberOfRadars;
+    private Skin skin;
+    private PauseDialog pauseDialog;
 
-    public MainGameScreen(SeaBattleGame game, PlayGround ground) {
+    public MainGameScreen(SeaBattleGame game, PlayGround ground, int level, int numberOfBombs, int numberOfRadars) {
+        skin = new Skin(Gdx.files.internal("freezing-ui.json"));
+        this.numberOfBombs=numberOfBombs;
+        this.numberOfRadars = numberOfRadars;
+        this.level = level;
         whoIsNext=0;
         this.game = game;
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("ukr.ttf"));
@@ -46,6 +53,8 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
         parameter.borderWidth = 3;
         parameter.borderColor = Color.GRAY;
         font = generator.generateFont(parameter);
+        pause = new Image(new Texture("pause1.png"));
+        pause.setPosition(Gdx.graphics.getWidth()-pause.getWidth()-15,Gdx.graphics.getHeight()-pause.getHeight()-15);
 
         FreeTypeFontGenerator generator1 = new FreeTypeFontGenerator(Gdx.files.internal("Zyana.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter1 = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -98,13 +107,39 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
         stage.addActor(computerGround);
         stage.addActor(turnLabel);
         stage.addActor(messageLabel);
+        stage.addActor(pause);
+        pauseDialog = new PauseDialog("Pause",skin);
+        pauseDialog.setVisible(false);
+        stage.addActor(pauseDialog);
         Gdx.input.setInputProcessor(this);
     }
+    public static class PauseDialog extends Dialog {
 
-    @Override
-    public void show(){
+        public PauseDialog(String title, Skin skin) {
+            super(title, skin);
+        }
 
+        public PauseDialog(String title, Skin skin, String windowStyleName) {
+            super(title, skin, windowStyleName);
+        }
+        {
+            text("Choose option");
+            button("Menu");
+            button("Restart");
+            button("Continue");
+        }
+
+        @Override
+        protected void result(Object object) {
+            this.setVisible(false);
+        }
+
+        public PauseDialog(String title, WindowStyle windowStyle) {
+            super(title, windowStyle);
+        }
     }
+    @Override
+    public void show(){}
     public int checkForWin(){
         if(userGround.getScore()== userGround.getNumberOfCellsInRow()){
             return -1;
@@ -118,24 +153,26 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
         if(checkForWin()!=0){
-            game.setScreen(new EndScreen(game,checkForWin(),computerGround.getGround().getScore()));
+            game.setScreen(new EndScreen(game,checkForWin(),computerGround.getGround().getScore(),level));
         }
         float delay = 2;
-        if(whoIsNext==1){
-            whoIsNext=3;
-            turnLabel.setText(" Computer turn");
-            Timer.schedule(new Timer.Task(){
-                @Override
-                public void run() {
-                    computerGround.shoot(messageLabel);
-                    if(computerGround.isStrike())
-                        whoIsNext=1;
-                    else {
-                        turnLabel.setText("     Your turn");
-                        whoIsNext=0;
+        if(pauseDialog.isVisible()==false){
+            if(whoIsNext==1){
+                whoIsNext=3;
+                turnLabel.setText(" Computer turn");
+                Timer.schedule(new Timer.Task(){
+                    @Override
+                    public void run() {
+                        computerGround.shoot(messageLabel);
+                        if(computerGround.isStrike())
+                            whoIsNext=1;
+                        else {
+                            turnLabel.setText("     Your turn");
+                            whoIsNext=0;
+                        }
                     }
-                }
-            }, delay);
+                }, delay);
+            }
         }
         batch.begin();
         sprite.draw(batch);
@@ -158,10 +195,6 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
     }
-    @Override
-    public void hide(){
-        Gdx.input.setInputProcessor(null);
-    }
 
     @Override
     public boolean keyDown(int keycode) {
@@ -182,9 +215,22 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         Vector2 coord = stage.screenToStageCoordinates(new Vector2((float)screenX,(float) screenY));
         Actor hitActor2 = computerGround.getGround().getStage().hit(coord.x,coord.y,true);
-        if(hitActor2==null)
-            System.out.println("Comp actor not found");
-        else {
+        Actor hitActor = stage.hit(coord.x,coord.y,true);
+        if(hitActor==pause){
+            System.out.println("Pause");
+            pauseDialog.setVisible(true);
+            pauseDialog.setZIndex(200);
+            pauseDialog.show(stage);
+        }else if(hitActor!=null && pauseDialog.isVisible()==true) {
+            if(hitActor.getClass()==Label.class && ((Label)hitActor).getText().length==4){
+                game.setScreen(new MainMenu(game,level));
+            }else if(hitActor.getClass()==Label.class && ((Label)hitActor).getText().length==7){
+                game.setScreen(new PutShipsScreen(game,level));
+            }else if(hitActor.getClass()==Label.class && ((Label)hitActor).getText().length==8){
+                pauseDialog.setVisible(false);
+            }
+        }
+        else if(hitActor2!=null){
             if(whoIsNext==0){
                 System.out.println("yes" + hitActor2.getName() + " " + hitActor2.getX()+" " + hitActor2.getY() + " class: " + hitActor2.getClass());
                 if(hitActor2.getClass()==Cell.class){
