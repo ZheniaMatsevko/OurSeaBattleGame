@@ -19,6 +19,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import java.awt.image.ColorModel;
+
 public class MainGameScreen extends ScreenAdapter implements InputProcessor {
     private ComputerGround computerGround;
     private PlayGround userGround;
@@ -274,10 +276,10 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
             for(int i=0;i<cells.length;i++){
                 if(!cells[i].isShot()){
                     if(cells[i].getIsTaken()) {
-                        cells[i].changeColor(Color.BLUE);
+                        cells[i].changeColor(Color.valueOf("3C5695"));
                     }
                     else {
-                        cells[i].changeColor(Color.PINK);
+                        cells[i].changeColor(Color.valueOf("FBF6AD"));
                     }
                 }
                 cells[i].setRadared(true);
@@ -347,9 +349,9 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
                         }else if(!((Cell) hitActor2).equals(computerGround.getGround().getPaintedCell())&& !((Cell) hitActor2).isShot()){
                             if(!computerGround.getGround().getPaintedCell().isShot()) {
                                 if(computerGround.getGround().getPaintedCell().isRadared() && computerGround.getGround().getPaintedCell().getIsTaken()){
-                                    computerGround.getGround().getPaintedCell().changeColor(Color.BLUE);
+                                    computerGround.getGround().getPaintedCell().changeColor(Color.valueOf("3C5695"));
                                 }else if(computerGround.getGround().getPaintedCell().isRadared()){
-                                    computerGround.getGround().getPaintedCell().changeColor(Color.PINK);
+                                    computerGround.getGround().getPaintedCell().changeColor(Color.valueOf("FBF6AD"));
                                 }else{
                                     computerGround.getGround().getPaintedCell().changeColor(Color.WHITE);
                                 }
@@ -400,16 +402,16 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
                         }
                         for(int i=0;i<cells.length;i++){
                             if(!cells[i].isShot())
-                                cells[i].changeColor(Color.RED);
+                                cells[i].changeColor(Color.valueOf("3C9556"));
                         }
                         computerGround.getGround().setRadaredCells(cells);
                     }else if(!((Cell) hitActor2).equals(computerGround.getGround().getMainRadaredCell())){
                         Cell[] change = computerGround.getGround().getRadaredCells();
                         for(int i=0;i<change.length;i++){
                             if(change[i].isRadared() && change[i].getIsTaken() && !change[i].isShot()){
-                                change[i].changeColor(Color.BLUE);
+                                change[i].changeColor(Color.valueOf("3C5695"));
                             }else if(change[i].isRadared() && !change[i].isShot()){
-                                change[i].changeColor(Color.PINK);
+                                change[i].changeColor(Color.valueOf("FBF6AD"));
                             }
                             else if(!change[i].isShot())
                                 change[i].changeColor(Color.WHITE);
@@ -439,7 +441,7 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
                         }
                         for(int i=0;i<cells.length;i++){
                             if(!cells[i].isShot())
-                                cells[i].changeColor(Color.RED);
+                                cells[i].changeColor(Color.valueOf("3C9556"));
                         }
                         computerGround.getGround().setRadaredCells(cells);
                     }
