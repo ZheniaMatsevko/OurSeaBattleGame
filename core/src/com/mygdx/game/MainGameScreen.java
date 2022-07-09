@@ -107,6 +107,7 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
         messageLabel.getStyle().background = new Image(new Texture(labelColor2)).getDrawable();
         stage = new Stage(new ScreenViewport());
         computerGround = new ComputerGround(10,10, Gdx.graphics.getWidth()/3 + 100,Gdx.graphics.getHeight()-100, ground);
+        computerGround.setSeaBattleGame(this.game);
         userGround = ground;
         ground.setNewPositions(60,Gdx.graphics.getHeight()-100);
         batch = new SpriteBatch();
@@ -177,8 +178,12 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
         if(checkForWin()!=0){
-            bonusScore+=bonusScore+ computerGround.getBonusScore();
-            game.setScreen(new EndScreen(game,checkForWin(),computerGround.getGround().getScore(),level, bonusScore));
+            if(checkForWin()==1) {
+                bonusScore+=bonusScore+ computerGround.getBonusScore();
+                game.setTotalScore(game.getTotalScore() + computerGround.getBonusScore());
+            }
+            if(level<3)game.setScreen(new EndScreen(game,checkForWin(),computerGround.getGround().getScore(),level, bonusScore));
+            else game.setScreen(new VictoryScreen(game));
             System.out.println(computerGround.getBonusScore());
         }
         float delay = 2;
@@ -271,6 +276,8 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
             bomb.setColor(Color.WHITE);
             bonusChosen=0;
         }else if(hitActor2!=null && bonusChosen==1 && computerGround.getGround().getRadaredCells()!=null){
+            /**радар був використаний**/
+            game.setRadarsUsed(game.getRadarsUsed() + 1);
             Cell[] cells = computerGround.getGround().getRadaredCells();
             for(int i=0;i<cells.length;i++){
                 if(!cells[i].isShot()){
@@ -291,6 +298,9 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
             if(numberOfRadars==0)
                 radar.setColor(Color.GRAY);
         }else if(hitActor2!=null && bonusChosen==2 && computerGround.getGround().getBombedCells()!=null){
+
+            /**бомба була використана**/
+           game.setBombsUsed(game.getBombsUsed() + 1);
             LinkedList<Cell> cells = computerGround.getGround().getBombedCells();
             for(Cell cell : cells){
                 if(!cell.isShot() && !cell.getIsTaken()){
