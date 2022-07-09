@@ -279,7 +279,7 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
                 System.out.println(bonusScore);
                 bonusTooExpensive.setVisible(false);
             }
-            else if (numberOfBombs<3){
+            else if (numberOfBombs<2){
                 removeWarnings();
                 bonusTooExpensive.setVisible(true);
             }
