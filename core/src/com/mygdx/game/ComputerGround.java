@@ -18,6 +18,11 @@ public class ComputerGround extends Actor {
     private List<Cell> damagedCells;
     private int damagedDirection;
     private int bonusScore = 20;
+    private SeaBattleGame game;
+
+    public void setSeaBattleGame(SeaBattleGame game) {
+        this.game = game;
+    }
 
     public int getBonusScore(){
         return bonusScore;
@@ -58,6 +63,7 @@ public class ComputerGround extends Actor {
                     messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and damaged the ship!");
                 }else{
                     messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and killed the ship!");
+                    game.setYourShipsKilled(game.getYourShipsKilled()+1);
                 }
                 bonusScore--;
                 isStrike = true;
@@ -108,6 +114,7 @@ public class ComputerGround extends Actor {
                     }else{
                         damagedCells.clear();
                         messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and killed the ship!");
+                        game.setYourShipsKilled(game.getYourShipsKilled()+1);
                     }
                     damagedDirection=direction;
                     bonusScore--;
@@ -164,6 +171,7 @@ public class ComputerGround extends Actor {
             }else{
                 damagedCells.clear();
                 messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and killed the ship!");
+                game.setYourShipsKilled(game.getYourShipsKilled()+1);
             }
             bonusScore--;
             isStrike = true;
