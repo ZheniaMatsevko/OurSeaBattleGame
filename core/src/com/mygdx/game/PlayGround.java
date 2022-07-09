@@ -30,6 +30,7 @@ public class PlayGround extends Actor  {
     private Cell paintedCell;
     private int score;
     private Cell[] radaredCells;
+    private LinkedList<Cell> bombedCells;
 
     public PlayGround(int numberOfCellsInRow, int numberOfBoats, int xC, int yC){
         paintedCell = null;
@@ -37,6 +38,7 @@ public class PlayGround extends Actor  {
         radaredCells = null;
         isBoatChanged = 0;
         score = 0;
+        bombedCells = null;
         this.numberOfCellsInRow = numberOfCellsInRow;
         setBounds(0,Gdx.graphics.getHeight(),Gdx.graphics.getWidth(),Gdx.graphics.getHeight()-50);
         setTouchable(Touchable.enabled);
@@ -84,6 +86,17 @@ public class PlayGround extends Actor  {
         putRandomBoats();
         isCellDragged = false;
     }
+
+    public void setBombedCells(LinkedList<Cell> bombedCells) {
+        this.bombedCells = bombedCells;
+    }
+    public LinkedList<Cell> getBombedCells(){
+        return this.bombedCells;
+    }
+    public Cell getMainBombedCell(){
+        return bombedCells.getFirst();
+    }
+
     public void setRadaredCells(Cell[] cells){
         if(cells==null)
             radaredCells=null;
