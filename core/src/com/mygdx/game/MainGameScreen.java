@@ -45,8 +45,11 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
     private Image radar;
     private Image bomb;
     private int bonusChosen;
+    private int bonusScore;
 
-    public MainGameScreen(SeaBattleGame game, PlayGround ground, int level, int numberOfBombs, int numberOfRadars) {
+    public MainGameScreen(SeaBattleGame game, PlayGround ground, int level, int numberOfBombs, int numberOfRadars,int bonusScore)
+    {
+        this.bonusScore = bonusScore;
         skin = new Skin(Gdx.files.internal("star-soldier-ui.json"));
         this.numberOfBombs=numberOfBombs;
         this.numberOfRadars = numberOfRadars;
@@ -179,7 +182,9 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
         if(checkForWin()!=0){
-            game.setScreen(new EndScreen(game,checkForWin(),computerGround.getGround().getScore(),level));
+            bonusScore+=bonusScore+ computerGround.getBonusScore();
+            game.setScreen(new EndScreen(game,checkForWin(),computerGround.getGround().getScore(),level, bonusScore));
+            System.out.println(computerGround.getBonusScore());
         }
         float delay = 2;
         if(pauseDialog.isVisible()==false){
@@ -253,9 +258,9 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
             pauseDialog.show(stage);
         }else if(hitActor!=null && pauseDialog.isVisible()==true && bonusChosen==0) {
             if(hitActor.getClass()==Label.class && ((Label)hitActor).getText().length==4){
-                game.setScreen(new MainMenu(game,level));
+                game.setScreen(new MainMenu(game,level,bonusScore));
             }else if(hitActor.getClass()==Label.class && ((Label)hitActor).getText().length==7){
-                game.setScreen(new PutShipsScreen(game,level));
+                game.setScreen(new PutShipsScreen(game,level,bonusScore));
             }else if(hitActor.getClass()==Label.class && ((Label)hitActor).getText().length==8){
                 pauseDialog.setVisible(false);
             }
