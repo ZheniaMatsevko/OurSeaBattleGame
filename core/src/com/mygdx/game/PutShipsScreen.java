@@ -29,7 +29,6 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
     private Sprite sprite;
     private Stage stage;
     private BitmapFont font;
-    private BitmapFont font2;
     private ImageButton putAgainButton;
     private ImageButton playButton;
     private Skin skin;
@@ -296,7 +295,6 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
             countBombsLabel.setText(" " + numberOfBombs);
         }else if(hitActor2==plusRadar){
             if (bonusScore >= 1 && numberOfRadars<3) {
-
             numberOfRadars++;
             bonusScore--;
             System.out.println(bonusScore);
@@ -360,13 +358,10 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
         Vector2 coord = stage.screenToStageCoordinates(new Vector2((float)screenX,(float) screenY));
         Actor hitActor = playGround.getStage().hit(coord.x,coord.y,true);
         if(hitActor==null && playGround.isBoatChanged()==1) {
-            System.out.println("playGround.isBoatChanged()==1");
             playGround.putShipsOnItsPlaces();
             playGround.setIsBoatChanged(0);
         }
-        else if(hitActor==null)
-            System.out.println("Touch dragged actor not found");
-        else {
+        else if(hitActor!=null){
             if(hitActor.getClass()==Cell.class){
                 playGround.setCellDragged(true);
                 if(playGround.isBoatChanged()==1){

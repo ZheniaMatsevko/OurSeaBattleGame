@@ -10,16 +10,12 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import java.awt.image.ColorModel;
 import java.util.LinkedList;
 
 public class MainGameScreen extends ScreenAdapter implements InputProcessor {
@@ -33,7 +29,6 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
     private SpriteBatch batch;
     private Sprite sprite;
     private int whoIsNext;
-    private int score;
     private Label turnLabel;
     private Label messageLabel;
     private Image pause;
@@ -218,13 +213,11 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
         fontNumbers.draw(batch,String.valueOf(userGround.getNumberOfCellsInRow()),20,userGround.getCell(9,0).getY()+userGround.getCellHeight()-6);
         fontNumbers.draw(batch,String.valueOf(letters.charAt(0)),computerGround.getGround().getCell(0,0).getX()+10,Gdx.graphics.getHeight()-67);
         fontNumbers.draw(batch,String.valueOf(userGround.getNumberOfCellsInRow()),computerGround.getGround().getCell(0,0).getX()-38,computerGround.getGround().getCell(9,0).getY()+userGround.getCellHeight()-6);
-
         for(int i=1;i<userGround.getNumberOfCellsInRow();i++){
             fontNumbers.draw(batch,String.valueOf(userGround.getNumberOfCellsInRow()-i),30,userGround.getCell(userGround.getNumberOfCellsInRow()-i-1,0).getY()+userGround.getCellHeight()-6);
             fontNumbers.draw(batch,String.valueOf(letters.charAt(i)),userGround.getCell(0,i).getX()+15,Gdx.graphics.getHeight()-67);
             fontNumbers.draw(batch,String.valueOf(letters.charAt(i)),computerGround.getGround().getCell(0,i).getX()+15,Gdx.graphics.getHeight()-67);
             fontNumbers.draw(batch,String.valueOf(userGround.getNumberOfCellsInRow()-i),computerGround.getGround().getCell(0,0).getX()-28,computerGround.getGround().getCell(userGround.getNumberOfCellsInRow()-i-1,0).getY()+userGround.getCellHeight()-6);
-
         }
         batch.end();
         stage.act(Gdx.graphics.getDeltaTime());
@@ -399,209 +392,136 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
         else if(!pauseDialog.isVisible() && bonusChosen==1){
             if(hitActor2==null) {
                 if(computerGround.getGround().getRadaredCells()!=null){
-                    Cell[] change = computerGround.getGround().getRadaredCells();
-                    for(int i=0;i<change.length;i++){
-                        if(change[i].isRadared() && change[i].getIsTaken() && !change[i].isShot()){
-                            change[i].changeColor(Color.valueOf("3C5695"));
-                        }else if(change[i].isRadared() && !change[i].isShot()){
-                            change[i].changeColor(Color.valueOf("FBF6AD"));
-                        }
-                        else if(!change[i].isShot())
-                            change[i].changeColor(Color.WHITE);
-                    }
+                    changeCellsForRadar();
                     computerGround.getGround().setRadaredCells(null);
                 }
             }
             else {
                 if(hitActor2.getClass()==Cell.class){
                     if(computerGround.getGround().getRadaredCells()==null) {
-                        Cell[] cells = new Cell[4];
-                        cells[0] = (Cell)hitActor2;
-                        if(computerGround.getGround().getI(cells[0])==9 && computerGround.getGround().getJ(cells[0])==9){
-                            cells[1] = computerGround.getGround().getCell(8,9);
-                            cells[2] = computerGround.getGround().getCell(8,8);
-                            cells[3] = computerGround.getGround().getCell(9,8);
-                        }else if(computerGround.getGround().getI(cells[0])==0 && computerGround.getGround().getJ(cells[0])==9){
-                            cells[1] = computerGround.getGround().getCell(0,8);
-                            cells[2] = computerGround.getGround().getCell(1,8);
-                            cells[3] = computerGround.getGround().getCell(1,9);
-                        }else if(computerGround.getGround().getJ(cells[0])==9){
-                            cells[1] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0])-1,9);
-                            cells[2] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0]),8);
-                            cells[3] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0])-1,8);
-                        }else if(computerGround.getGround().getI(cells[0])==0){
-                            cells[1] = computerGround.getGround().getCell(0,computerGround.getGround().getJ(cells[0])+1);
-                            cells[2] = computerGround.getGround().getCell(1,computerGround.getGround().getJ(cells[0])+1);
-                            cells[3] = computerGround.getGround().getCell(1,computerGround.getGround().getJ(cells[0]));
-                        }else{
-                            cells[1] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0]),computerGround.getGround().getJ(cells[0])+1);
-                            cells[2] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0])-1,computerGround.getGround().getJ(cells[0])+1);
-                            cells[3] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0])-1,computerGround.getGround().getJ(cells[0]));
-                        }
-                        for(int i=0;i<cells.length;i++){
-                            if(!cells[i].isShot())
-                                cells[i].changeColor(Color.valueOf("3C9556"));
-                        }
-                        computerGround.getGround().setRadaredCells(cells);
+                        setCellsForRadar(hitActor2);
                     }else if(!((Cell) hitActor2).equals(computerGround.getGround().getMainRadaredCell())){
-                        Cell[] change = computerGround.getGround().getRadaredCells();
-                        for(int i=0;i<change.length;i++){
-                            if(change[i].isRadared() && change[i].getIsTaken() && !change[i].isShot()){
-                                change[i].changeColor(Color.valueOf("3C5695"));
-                            }else if(change[i].isRadared() && !change[i].isShot()){
-                                change[i].changeColor(Color.valueOf("FBF6AD"));
-                            }
-                            else if(!change[i].isShot())
-                                change[i].changeColor(Color.WHITE);
-                        }
-                        Cell[] cells = new Cell[4];
-                        cells[0] = (Cell)hitActor2;
-                        if(computerGround.getGround().getI(cells[0])==9 && computerGround.getGround().getJ(cells[0])==9){
-                            cells[1] = computerGround.getGround().getCell(8,9);
-                            cells[2] = computerGround.getGround().getCell(8,8);
-                            cells[3] = computerGround.getGround().getCell(9,8);
-                        }else if(computerGround.getGround().getI(cells[0])==0 && computerGround.getGround().getJ(cells[0])==9){
-                            cells[1] = computerGround.getGround().getCell(0,8);
-                            cells[2] = computerGround.getGround().getCell(1,8);
-                            cells[3] = computerGround.getGround().getCell(1,9);
-                        }else if(computerGround.getGround().getJ(cells[0])==9){
-                            cells[1] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0])-1,9);
-                            cells[2] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0]),8);
-                            cells[3] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0])-1,8);
-                        }else if(computerGround.getGround().getI(cells[0])==0){
-                            cells[1] = computerGround.getGround().getCell(0,computerGround.getGround().getJ(cells[0])+1);
-                            cells[2] = computerGround.getGround().getCell(1,computerGround.getGround().getJ(cells[0])+1);
-                            cells[3] = computerGround.getGround().getCell(1,computerGround.getGround().getJ(cells[0]));
-                        }else{
-                            cells[1] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0]),computerGround.getGround().getJ(cells[0])+1);
-                            cells[2] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0])-1,computerGround.getGround().getJ(cells[0])+1);
-                            cells[3] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0])-1,computerGround.getGround().getJ(cells[0]));
-                        }
-                        for(int i=0;i<cells.length;i++){
-                            if(!cells[i].isShot())
-                                cells[i].changeColor(Color.valueOf("3C9556"));
-                        }
-                        computerGround.getGround().setRadaredCells(cells);
+                        changeCellsForRadar();
+                        setCellsForRadar(hitActor2);
                     }
                 }
             }
         }else if(!pauseDialog.isVisible() && bonusChosen==2){
             if(hitActor2==null) {
                 if(computerGround.getGround().getBombedCells()!=null){
-                    LinkedList<Cell> change = computerGround.getGround().getBombedCells();
-                    for(Cell cell : change){
-                        if(cell.isRadared() && cell.getIsTaken() && !cell.isShot()){
-                            cell.changeColor(Color.valueOf("3C5695"));
-                        }else if(cell.isRadared() && !cell.isShot()){
-                            cell.changeColor(Color.valueOf("FBF6AD"));
-                        }
-                        else if(!cell.isShot())
-                            cell.changeColor(Color.WHITE);
-                    }
+                    changeCellsForBomb();
                     computerGround.getGround().setBombedCells(null);
                 }
             }
             else {
                 if(hitActor2.getClass()==Cell.class){
                     if(computerGround.getGround().getBombedCells()==null) {
-                        LinkedList<Cell> cells = new LinkedList<>();
-                        cells.add((Cell)hitActor2);
-                        if(computerGround.getGround().getI((Cell)hitActor2)==9 && computerGround.getGround().getJ((Cell)hitActor2)==9){
-                            cells.add(computerGround.getGround().getCell(8,9));
-                            cells.add(computerGround.getGround().getCell(9,8));
-                        }else if(computerGround.getGround().getI((Cell)hitActor2)==0 && computerGround.getGround().getJ((Cell)hitActor2)==9){
-                            cells.add(computerGround.getGround().getCell(0,8));
-                            cells.add(computerGround.getGround().getCell(1,9));
-                        }else if(computerGround.getGround().getI((Cell)hitActor2)==9 && computerGround.getGround().getJ((Cell)hitActor2)==0){
-                            cells.add(computerGround.getGround().getCell(9,1));
-                            cells.add(computerGround.getGround().getCell(8,0));
-                        }else if(computerGround.getGround().getI((Cell)hitActor2)==0 && computerGround.getGround().getJ((Cell)hitActor2)==0){
-                            cells.add(computerGround.getGround().getCell(1,0));
-                            cells.add(computerGround.getGround().getCell(0,1));
-                        }else if(computerGround.getGround().getJ((Cell)hitActor2)==9){
-                            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2),8));
-                            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2)-1,9));
-                            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2)+1,9));
-                        }else if(computerGround.getGround().getJ((Cell)hitActor2)==0){
-                            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2),1));
-                            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2)-1,0));
-                            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2)+1,0));
-                        }else if(computerGround.getGround().getI((Cell)hitActor2)==0){
-                            cells.add(computerGround.getGround().getCell(0,computerGround.getGround().getJ((Cell)hitActor2)+1));
-                            cells.add(computerGround.getGround().getCell(0,computerGround.getGround().getJ((Cell)hitActor2)-1));
-                            cells.add(computerGround.getGround().getCell(1,computerGround.getGround().getJ((Cell)hitActor2)));
-                        }else if(computerGround.getGround().getI((Cell)hitActor2)==9){
-                            cells.add(computerGround.getGround().getCell(9,computerGround.getGround().getJ((Cell)hitActor2)+1));
-                            cells.add(computerGround.getGround().getCell(9,computerGround.getGround().getJ((Cell)hitActor2)-1));
-                            cells.add(computerGround.getGround().getCell(8,computerGround.getGround().getJ((Cell)hitActor2)));
-                        }else{
-                            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2),computerGround.getGround().getJ((Cell)hitActor2)+1));
-                            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2),computerGround.getGround().getJ((Cell)hitActor2)-1));
-                            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2)+1,computerGround.getGround().getJ((Cell)hitActor2)));
-                            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2)-1,computerGround.getGround().getJ((Cell)hitActor2)));
-                        }
-                        for(Cell cell: cells){
-                            if(!cell.isShot())
-                                cell.changeColor(Color.valueOf("F1013E"));
-                        }
-                        computerGround.getGround().setBombedCells(cells);
+                        setCellsForBomb(hitActor2);
                     }else if(!((Cell) hitActor2).equals(computerGround.getGround().getMainBombedCell())){
-                        LinkedList<Cell> change = computerGround.getGround().getBombedCells();
-                        for(Cell cell : change){
-                            if(cell.isRadared() && cell.getIsTaken() && !cell.isShot()){
-                                cell.changeColor(Color.valueOf("3C5695"));
-                            }else if(cell.isRadared() && !cell.isShot()){
-                                cell.changeColor(Color.valueOf("FBF6AD"));
-                            }
-                            else if(!cell.isShot())
-                                cell.changeColor(Color.WHITE);
-                        }
-                        LinkedList<Cell> cells = new LinkedList<>();
-                        cells.add((Cell)hitActor2);
-                        if(computerGround.getGround().getI((Cell)hitActor2)==9 && computerGround.getGround().getJ((Cell)hitActor2)==9){
-                            cells.add(computerGround.getGround().getCell(8,9));
-                            cells.add(computerGround.getGround().getCell(9,8));
-                        }else if(computerGround.getGround().getI((Cell)hitActor2)==0 && computerGround.getGround().getJ((Cell)hitActor2)==9){
-                            cells.add(computerGround.getGround().getCell(0,8));
-                            cells.add(computerGround.getGround().getCell(1,9));
-                        }else if(computerGround.getGround().getI((Cell)hitActor2)==9 && computerGround.getGround().getJ((Cell)hitActor2)==0){
-                            cells.add(computerGround.getGround().getCell(9,1));
-                            cells.add(computerGround.getGround().getCell(8,0));
-                        }else if(computerGround.getGround().getI((Cell)hitActor2)==0 && computerGround.getGround().getJ((Cell)hitActor2)==0){
-                            cells.add(computerGround.getGround().getCell(1,0));
-                            cells.add(computerGround.getGround().getCell(0,1));
-                        }else if(computerGround.getGround().getJ((Cell)hitActor2)==9){
-                            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2),8));
-                            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2)-1,9));
-                            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2)+1,9));
-                        }else if(computerGround.getGround().getJ((Cell)hitActor2)==0){
-                            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2),1));
-                            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2)-1,0));
-                            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2)+1,0));
-                        }else if(computerGround.getGround().getI((Cell)hitActor2)==0){
-                            cells.add(computerGround.getGround().getCell(0,computerGround.getGround().getJ((Cell)hitActor2)+1));
-                            cells.add(computerGround.getGround().getCell(0,computerGround.getGround().getJ((Cell)hitActor2)-1));
-                            cells.add(computerGround.getGround().getCell(1,computerGround.getGround().getJ((Cell)hitActor2)));
-                        }else if(computerGround.getGround().getI((Cell)hitActor2)==9){
-                            cells.add(computerGround.getGround().getCell(9,computerGround.getGround().getJ((Cell)hitActor2)+1));
-                            cells.add(computerGround.getGround().getCell(9,computerGround.getGround().getJ((Cell)hitActor2)-1));
-                            cells.add(computerGround.getGround().getCell(8,computerGround.getGround().getJ((Cell)hitActor2)));
-                        }else{
-                            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2),computerGround.getGround().getJ((Cell)hitActor2)+1));
-                            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2),computerGround.getGround().getJ((Cell)hitActor2)-1));
-                            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2)+1,computerGround.getGround().getJ((Cell)hitActor2)));
-                            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2)-1,computerGround.getGround().getJ((Cell)hitActor2)));
-                        }
-                        for(Cell cell: cells){
-                            if(!cell.isShot())
-                                cell.changeColor(Color.valueOf("F1013E"));
-                        }
-                        computerGround.getGround().setBombedCells(cells);
+                        changeCellsForBomb();
+                        setCellsForBomb(hitActor2);
                     }
                 }
             }
         }
         return true;
+    }
+    private void changeCellsForBomb(){
+        LinkedList<Cell> change = computerGround.getGround().getBombedCells();
+        for(Cell cell : change){
+            if(cell.isRadared() && cell.getIsTaken() && !cell.isShot()){
+                cell.changeColor(Color.valueOf("3C5695"));
+            }else if(cell.isRadared() && !cell.isShot()){
+                cell.changeColor(Color.valueOf("FBF6AD"));
+            }
+            else if(!cell.isShot())
+                cell.changeColor(Color.WHITE);
+        }
+    }
+    private void setCellsForBomb(Actor hitActor2){
+        LinkedList<Cell> cells = new LinkedList<>();
+        cells.add((Cell)hitActor2);
+        if(computerGround.getGround().getI((Cell)hitActor2)==9 && computerGround.getGround().getJ((Cell)hitActor2)==9){
+            cells.add(computerGround.getGround().getCell(8,9));
+            cells.add(computerGround.getGround().getCell(9,8));
+        }else if(computerGround.getGround().getI((Cell)hitActor2)==0 && computerGround.getGround().getJ((Cell)hitActor2)==9){
+            cells.add(computerGround.getGround().getCell(0,8));
+            cells.add(computerGround.getGround().getCell(1,9));
+        }else if(computerGround.getGround().getI((Cell)hitActor2)==9 && computerGround.getGround().getJ((Cell)hitActor2)==0){
+            cells.add(computerGround.getGround().getCell(9,1));
+            cells.add(computerGround.getGround().getCell(8,0));
+        }else if(computerGround.getGround().getI((Cell)hitActor2)==0 && computerGround.getGround().getJ((Cell)hitActor2)==0){
+            cells.add(computerGround.getGround().getCell(1,0));
+            cells.add(computerGround.getGround().getCell(0,1));
+        }else if(computerGround.getGround().getJ((Cell)hitActor2)==9){
+            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2),8));
+            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2)-1,9));
+            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2)+1,9));
+        }else if(computerGround.getGround().getJ((Cell)hitActor2)==0){
+            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2),1));
+            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2)-1,0));
+            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2)+1,0));
+        }else if(computerGround.getGround().getI((Cell)hitActor2)==0){
+            cells.add(computerGround.getGround().getCell(0,computerGround.getGround().getJ((Cell)hitActor2)+1));
+            cells.add(computerGround.getGround().getCell(0,computerGround.getGround().getJ((Cell)hitActor2)-1));
+            cells.add(computerGround.getGround().getCell(1,computerGround.getGround().getJ((Cell)hitActor2)));
+        }else if(computerGround.getGround().getI((Cell)hitActor2)==9){
+            cells.add(computerGround.getGround().getCell(9,computerGround.getGround().getJ((Cell)hitActor2)+1));
+            cells.add(computerGround.getGround().getCell(9,computerGround.getGround().getJ((Cell)hitActor2)-1));
+            cells.add(computerGround.getGround().getCell(8,computerGround.getGround().getJ((Cell)hitActor2)));
+        }else{
+            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2),computerGround.getGround().getJ((Cell)hitActor2)+1));
+            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2),computerGround.getGround().getJ((Cell)hitActor2)-1));
+            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2)+1,computerGround.getGround().getJ((Cell)hitActor2)));
+            cells.add(computerGround.getGround().getCell(computerGround.getGround().getI((Cell)hitActor2)-1,computerGround.getGround().getJ((Cell)hitActor2)));
+        }
+        for(Cell cell: cells){
+            if(!cell.isShot())
+                cell.changeColor(Color.valueOf("F1013E"));
+        }
+        computerGround.getGround().setBombedCells(cells);
+    }
+    private void setCellsForRadar(Actor hitActor2){
+        Cell[] cells = new Cell[4];
+        cells[0] = (Cell)hitActor2;
+        if(computerGround.getGround().getI(cells[0])==9 && computerGround.getGround().getJ(cells[0])==9){
+            cells[1] = computerGround.getGround().getCell(8,9);
+            cells[2] = computerGround.getGround().getCell(8,8);
+            cells[3] = computerGround.getGround().getCell(9,8);
+        }else if(computerGround.getGround().getI(cells[0])==0 && computerGround.getGround().getJ(cells[0])==9){
+            cells[1] = computerGround.getGround().getCell(0,8);
+            cells[2] = computerGround.getGround().getCell(1,8);
+            cells[3] = computerGround.getGround().getCell(1,9);
+        }else if(computerGround.getGround().getJ(cells[0])==9){
+            cells[1] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0])-1,9);
+            cells[2] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0]),8);
+            cells[3] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0])-1,8);
+        }else if(computerGround.getGround().getI(cells[0])==0){
+            cells[1] = computerGround.getGround().getCell(0,computerGround.getGround().getJ(cells[0])+1);
+            cells[2] = computerGround.getGround().getCell(1,computerGround.getGround().getJ(cells[0])+1);
+            cells[3] = computerGround.getGround().getCell(1,computerGround.getGround().getJ(cells[0]));
+        }else{
+            cells[1] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0]),computerGround.getGround().getJ(cells[0])+1);
+            cells[2] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0])-1,computerGround.getGround().getJ(cells[0])+1);
+            cells[3] = computerGround.getGround().getCell(computerGround.getGround().getI(cells[0])-1,computerGround.getGround().getJ(cells[0]));
+        }
+        for(int i=0;i<cells.length;i++){
+            if(!cells[i].isShot())
+                cells[i].changeColor(Color.valueOf("3C9556"));
+        }
+        computerGround.getGround().setRadaredCells(cells);
+    }
+    private void changeCellsForRadar(){
+        Cell[] change = computerGround.getGround().getRadaredCells();
+        for(int i=0;i<change.length;i++){
+            if(change[i].isRadared() && change[i].getIsTaken() && !change[i].isShot()){
+                change[i].changeColor(Color.valueOf("3C5695"));
+            }else if(change[i].isRadared() && !change[i].isShot()){
+                change[i].changeColor(Color.valueOf("FBF6AD"));
+            }
+            else if(!change[i].isShot())
+                change[i].changeColor(Color.WHITE);
+        }
     }
 
     @Override

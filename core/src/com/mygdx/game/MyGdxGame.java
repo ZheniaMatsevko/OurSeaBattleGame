@@ -24,7 +24,6 @@ public class MyGdxGame extends ApplicationAdapter {
 	private Skin skin;
 
 	private Table table;
-	private Table table2;
 	private TextButton singleModeButton;
 	private TextButton twoModeButton;
 	private ImageButton settingsButton;
@@ -69,32 +68,24 @@ public class MyGdxGame extends ApplicationAdapter {
 		table.row();
 		table.add(twoModeButton).padBottom(15);
 		table.row();
-		//table.add(settingsButton).padRight(0);
-		//table.add(helpButton);
 		stage.addActor(settingsButton);
 		stage.addActor(helpButton);
 		stage.addActor(table);
-
-
 		batch = new SpriteBatch();
 		sprite = new Sprite(new Texture(Gdx.files.internal("sea.png")));
 		sprite.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
 		Gdx.input.setInputProcessor(stage);
-
 	}
 
 	@Override
 	public void render () {
 		ScreenUtils.clear(0, 0, 0, 1);
 		batch.begin();
-		String text = "SEA BATTLE";
 		sprite.draw(batch);
 		font.draw(batch,"SEA BATTLE",Gdx.graphics.getWidth()/4,Gdx.graphics.getHeight()/4*3);
 		batch.end();
 		stage.act(Gdx.graphics.getDeltaTime());
 		stage.draw();
-
 	}
 	
 	@Override

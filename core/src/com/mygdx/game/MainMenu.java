@@ -25,7 +25,6 @@ public class MainMenu extends ScreenAdapter implements InputProcessor{
     private SpriteBatch batch;
     private Sprite sprite;
     private Stage stage;
-    private Skin skin;
     private int level;
     private ImageButton startButton;
     private ImageButton settingsButton;
@@ -43,7 +42,6 @@ public class MainMenu extends ScreenAdapter implements InputProcessor{
         parameter.borderWidth = 2;
         parameter.borderColor = Color.GRAY;
         font = generator.generateFont(parameter);
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
         stage = new Stage(new ScreenViewport());
         Texture myTexture3 = new Texture(Gdx.files.internal("play3.png"));
         TextureRegion myTextureRegion3 = new TextureRegion(myTexture3);
@@ -76,7 +74,6 @@ public class MainMenu extends ScreenAdapter implements InputProcessor{
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
         batch.begin();
-        String text = "SEA BATTLE";
         sprite.draw(batch);
         font.draw(batch,"SEA BATTLE",Gdx.graphics.getWidth()/3+20,Gdx.graphics.getHeight()/4*3);
         batch.end();
@@ -106,18 +103,12 @@ public class MainMenu extends ScreenAdapter implements InputProcessor{
         if(hitActor==startButton.getImage()){
             System.out.println("Hit " + hitActor.getClass());
             game.setScreen(new PutShipsScreen(game,level,bonusScore));
-        }
-
-        if(hitActor==helpButton.getImage()){
+        }else if(hitActor==helpButton.getImage()){
             System.out.println("Hit " + hitActor.getClass());
             game.setScreen(new HelpScreen(game,level,bonusScore));
         }
-
         return true;
     }
-
-
-
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {

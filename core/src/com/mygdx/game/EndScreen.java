@@ -13,8 +13,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -83,9 +81,7 @@ public class EndScreen extends ScreenAdapter implements InputProcessor {
         batch.begin();
         sprite.draw(batch);
         if (whoWin == -1) {
-
             font.draw(batch, "Your score: " + score + "/10 boats", gameOver.getX() - 30, gameOver.getY() - 30);
-
         } else {
             font.draw(batch, "Your score: " + score + "/10 boats", victory.getX() - 100, victory.getY() - 30);
             font.draw(batch, "You earned " + bonusScore + " bonus points!", victory.getX() - 125, victory.getY() - 110);
@@ -113,20 +109,16 @@ public class EndScreen extends ScreenAdapter implements InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         Vector2 coord = stage.screenToStageCoordinates(new Vector2((float)screenX,(float) screenY));
         Actor hitActor = stage.hit(coord.x,coord.y,true);
-        System.out.println("Hjhj");
         if(whoWin==1){
             if(hitActor==continueImage){
-                System.out.println("Hit " + hitActor.getClass());
                 game.setScreen(new PutShipsScreen(game,level,bonusScore));
             }
         }else{
             if(hitActor==restart){
-                System.out.println("Hit " + hitActor.getClass());
                 game.setScreen(new PutShipsScreen(game,level,bonusScore));
             }
         }
         if(hitActor==menu){
-            System.out.println("Hit " + hitActor.getClass());
             game.setScreen(new MainMenu(game,level,bonusScore));
         }
         return true;
