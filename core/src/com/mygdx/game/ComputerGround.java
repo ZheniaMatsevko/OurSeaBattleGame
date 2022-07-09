@@ -20,12 +20,19 @@ public class ComputerGround extends Actor {
     private int bonusScore = 20;
     private SeaBattleGame game;
 
+
+    public List<Cell> getDamagedCells() {
+        return damagedCells;
+    }
     public void setSeaBattleGame(SeaBattleGame game) {
         this.game = game;
     }
 
     public int getBonusScore(){
         return bonusScore;
+    }
+    public void setBonusScore(int score) {
+        this.bonusScore = score;
     }
 
     public ComputerGround(int numberOfCellsInRow, int numberOfBoats, int x, int y, PlayGround userGround){
@@ -164,23 +171,26 @@ public class ComputerGround extends Actor {
         }
     }
     private void compKill(Cell cell,Label messageLabel){
-        if(userGround.checkShotCell(cell)){
-            if(!userGround.killCell(cell)){
-                damagedCells.add(cell);
-                messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and damaged the ship!");
-            }else{
-                damagedCells.clear();
-                messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and killed the ship!");
-                game.setYourShipsKilled(game.getYourShipsKilled()+1);
+        if(!cell.isShot()) {
+            if (userGround.checkShotCell(cell)) {
+                if (!userGround.killCell(cell)) {
+                    damagedCells.add(cell);
+                    messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and damaged the ship!");
+                } else {
+                    damagedCells.clear();
+                    messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and killed the ship!");
+                    game.setYourShipsKilled(game.getYourShipsKilled() + 1);
+                }
+                bonusScore--;
+                isStrike = true;
+            } else {
+                cell.changeColor(Color.GRAY);
+                cell.setShot(true);
+                isStrike = false;
+                messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and missed.");
             }
-            bonusScore--;
-            isStrike = true;
-        }else{
-            cell.changeColor(Color.GRAY);
-            cell.setShot(true);
-            isStrike = false;
-            messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and missed.");
         }
+        else damagedCells.clear();
     }
     @Override
     public void draw(Batch batch, float parentAlpha) {

@@ -14,7 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 public class Cell extends Image {
     private boolean isTaken;
     private boolean shouldBeEmpty;
-    private boolean isShot;
+    private boolean isShot = false;
     private boolean isRadared;
     private Boat boat;
     @Override

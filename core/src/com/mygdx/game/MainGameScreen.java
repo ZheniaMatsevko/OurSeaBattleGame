@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import java.util.LinkedList;
+import java.util.Random;
 
 public class MainGameScreen extends ScreenAdapter implements InputProcessor {
     private ComputerGround computerGround;
@@ -41,9 +42,13 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
     private Image bomb;
     private int bonusChosen;
     private int bonusScore;
+    private int randomAction = 0;
+    private Random random = new Random();
+    private Image expl = new Image();
 
     public MainGameScreen(SeaBattleGame game, PlayGround ground, int level, int numberOfBombs, int numberOfRadars,int bonusScore)
     {
+
         this.bonusScore = bonusScore;
         skin = new Skin(Gdx.files.internal("star-soldier-ui.json"));
         this.numberOfBombs=numberOfBombs;
@@ -136,6 +141,10 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
         pauseDialog = new PauseDialog("Pause",skin);
         pauseDialog.setVisible(false);
         stage.addActor(pauseDialog);
+        expl = new Image(new Texture(Gdx.files.internal("explosion.png")));
+        expl.setPosition(500,500);
+        stage.addActor(expl);
+        expl.setVisible(false);
         Gdx.input.setInputProcessor(this);
     }
     public static class PauseDialog extends Dialog {
@@ -179,10 +188,10 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
         ScreenUtils.clear(0, 0, 0, 1);
         if(checkForWin()!=0){
             if(checkForWin()==1) {
-                bonusScore+=bonusScore+ computerGround.getBonusScore();
+                bonusScore=computerGround.getBonusScore();
                 game.setTotalScore(game.getTotalScore() + computerGround.getBonusScore());
             }
-            if(level<3)game.setScreen(new EndScreen(game,checkForWin(),computerGround.getGround().getScore(),level, bonusScore));
+            if(level<3 || checkForWin()==-1)game.setScreen(new EndScreen(game,checkForWin(),computerGround.getGround().getScore(),level, bonusScore));
             else game.setScreen(new VictoryScreen(game));
             System.out.println(computerGround.getBonusScore());
         }
@@ -201,6 +210,8 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
                             turnLabel.setText("     Your turn");
                             whoIsNext=0;
                         }
+                        expl.setVisible(false);
+
                     }
                 }, delay);
             }
@@ -246,108 +257,156 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        Vector2 coord = stage.screenToStageCoordinates(new Vector2((float)screenX,(float) screenY));
-        Actor hitActor2 = computerGround.getGround().getStage().hit(coord.x,coord.y,true);
-        Actor hitActor = stage.hit(coord.x,coord.y,true);
-        if(hitActor==pause && bonusChosen==0){
+        Vector2 coord = stage.screenToStageCoordinates(new Vector2((float) screenX, (float) screenY));
+        Actor hitActor2 = computerGround.getGround().getStage().hit(coord.x, coord.y, true);
+        Actor hitActor = stage.hit(coord.x, coord.y, true);
+        if (hitActor == pause && bonusChosen == 0) {
             System.out.println("Pause");
             pauseDialog.setVisible(true);
             pauseDialog.setZIndex(200);
             pauseDialog.show(stage);
-        }else if(hitActor!=null && pauseDialog.isVisible()==true && bonusChosen==0) {
-            if(hitActor.getClass()==Label.class && ((Label)hitActor).getText().length==4){
-                game.setScreen(new MainMenu(game,level,bonusScore));
-            }else if(hitActor.getClass()==Label.class && ((Label)hitActor).getText().length==7){
-                game.setScreen(new PutShipsScreen(game,level,bonusScore));
-            }else if(hitActor.getClass()==Label.class && ((Label)hitActor).getText().length==8){
+        } else if (hitActor != null && pauseDialog.isVisible() == true && bonusChosen == 0) {
+            if (hitActor.getClass() == Label.class && ((Label) hitActor).getText().length == 4) {
+                game.setScreen(new MainMenu(game, level, bonusScore));
+            } else if (hitActor.getClass() == Label.class && ((Label) hitActor).getText().length == 7) {
+                game.setScreen(new PutShipsScreen(game, level, bonusScore));
+            } else if (hitActor.getClass() == Label.class && ((Label) hitActor).getText().length == 8) {
                 pauseDialog.setVisible(false);
             }
-        }
-        else if(level>1 && hitActor==bomb && numberOfBombs>0 && bonusChosen==0){
+        } else if (level > 1 && hitActor == bomb && numberOfBombs > 0 && bonusChosen == 0) {
             bomb.setColor(Color.RED);
-            bonusChosen=2;
-        } else if(level>1 && hitActor==radar && numberOfRadars>0 && bonusChosen==0){
+            bonusChosen = 2;
+        } else if (level > 1 && hitActor == radar && numberOfRadars > 0 && bonusChosen == 0) {
             radar.setColor(Color.PINK);
-            bonusChosen=1;
-        }else if(bonusChosen==1&& hitActor==radar){
+            bonusChosen = 1;
+        } else if (bonusChosen == 1 && hitActor == radar) {
             radar.setColor(Color.WHITE);
-            bonusChosen=0;
-        } else if(bonusChosen==2&& hitActor==bomb){
+            bonusChosen = 0;
+        } else if (bonusChosen == 2 && hitActor == bomb) {
             bomb.setColor(Color.WHITE);
-            bonusChosen=0;
-        }else if(hitActor2!=null && bonusChosen==1 && computerGround.getGround().getRadaredCells()!=null){
+            bonusChosen = 0;
+        } else if (hitActor2 != null && bonusChosen == 1 && computerGround.getGround().getRadaredCells() != null) {
             /**радар був використаний**/
             game.setRadarsUsed(game.getRadarsUsed() + 1);
             Cell[] cells = computerGround.getGround().getRadaredCells();
-            for(int i=0;i<cells.length;i++){
-                if(!cells[i].isShot()){
-                    if(cells[i].getIsTaken()) {
+            for (int i = 0; i < cells.length; i++) {
+                if (!cells[i].isShot()) {
+                    if (cells[i].getIsTaken()) {
                         cells[i].changeColor(Color.valueOf("3C5695"));
-                    }
-                    else {
+                    } else {
                         cells[i].changeColor(Color.valueOf("FBF6AD"));
                     }
                 }
                 cells[i].setRadared(true);
             }
             computerGround.getGround().setRadaredCells(null);
-            bonusChosen=0;
+            bonusChosen = 0;
             radar.setColor(Color.WHITE);
             numberOfRadars--;
-            whoIsNext=1;
-            if(numberOfRadars==0)
+            whoIsNext = 1;
+            if (numberOfRadars == 0)
                 radar.setColor(Color.GRAY);
-        }else if(hitActor2!=null && bonusChosen==2 && computerGround.getGround().getBombedCells()!=null){
+        } else if (hitActor2 != null && bonusChosen == 2 && computerGround.getGround().getBombedCells() != null) {
 
             /**бомба була використана**/
-           game.setBombsUsed(game.getBombsUsed() + 1);
+            game.setBombsUsed(game.getBombsUsed() + 1);
             LinkedList<Cell> cells = computerGround.getGround().getBombedCells();
-            for(Cell cell : cells){
-                if(!cell.isShot() && !cell.getIsTaken()){
+            for (Cell cell : cells) {
+                if (!cell.isShot() && !cell.getIsTaken()) {
                     cell.changeColor(Color.GRAY);
                     cell.setShot(true);
-                }else if(!cell.isShot()){
-                    if(computerGround.getGround().killCell(cell)){
+                } else if (!cell.isShot()) {
+                    if (computerGround.getGround().killCell(cell)) {
                         messageLabel.setText("      User bombed " + computerGround.getGround().getCellName(cell) + " and killed the ship!");
-                    }else{
+                    } else {
                         messageLabel.setText("      User bombed " + computerGround.getGround().getCellName(cell) + " and damaged the ship!");
                     }
                     cell.changeColor(Color.GREEN);
                 }
             }
             computerGround.getGround().setBombedCells(null);
-            bonusChosen=0;
+            bonusChosen = 0;
             bomb.setColor(Color.WHITE);
             numberOfBombs--;
-            whoIsNext=1;
-            if(numberOfBombs==0)
+            whoIsNext = 1;
+            if (numberOfBombs == 0)
                 bomb.setColor(Color.GRAY);
-        }
-        else if(hitActor2!=null && bonusChosen==0){
-            if(whoIsNext==0){
-                System.out.println("yes" + hitActor2.getName() + " " + hitActor2.getX()+" " + hitActor2.getY() + " class: " + hitActor2.getClass());
-                if(hitActor2.getClass()==Cell.class){
-                    if(!((Cell) hitActor2).isShot()){
-                        if(computerGround.getGround().checkShotCell((Cell)hitActor2)){
-                            if(computerGround.getGround().killCell((Cell)hitActor2)){
-                                messageLabel.setText("      User shot at " + computerGround.getGround().getCellName((Cell)hitActor2) + " and killed the ship!");
-                            }else{
-                                messageLabel.setText("      User shot at " + computerGround.getGround().getCellName((Cell)hitActor2) + " and damaged the ship!");
-                            }
-                            ((Cell) hitActor2).changeColor(Color.GREEN);
-                        }else{
-                            ((Cell) hitActor2).changeColor(Color.GRAY);
-                            ((Cell) hitActor2).setShot(true);
-                            messageLabel.setText("      User shot at " + computerGround.getGround().getCellName((Cell)hitActor2) + " and missed.");
-                            whoIsNext=1;
-                        }
-                    }
+        } else if (hitActor2 != null && bonusChosen == 0) {
+            if (whoIsNext == 0) {
+                System.out.println("yes" + hitActor2.getName() + " " + hitActor2.getX() + " " + hitActor2.getY() + " class: " + hitActor2.getClass());
+
+                /**рандомні події
+                 * 1 - вибух на своєму полі
+                 * 2 - хвиля**/
+                if (level == 3) {
+                    int willOcure = random.nextInt(10);
+
+                    //if (willOcure ==1) randomAction = random.nextInt(2) + 1;
+                    if (willOcure ==1) randomAction = 1;
+                    else randomAction = 0;
                 }
 
+
+                if (hitActor2.getClass() == Cell.class && randomAction == 0) {
+
+                    if (!((Cell) hitActor2).isShot()) {
+                        if (computerGround.getGround().checkShotCell((Cell) hitActor2)) {
+                            if (computerGround.getGround().killCell((Cell) hitActor2)) {
+                                messageLabel.setText("      User shot at " + computerGround.getGround().getCellName((Cell) hitActor2) + " and killed the ship!");
+                            } else {
+                                messageLabel.setText("      User shot at " + computerGround.getGround().getCellName((Cell) hitActor2) + " and damaged the ship!");
+                            }
+                            ((Cell) hitActor2).changeColor(Color.GREEN);
+                        } else {
+                            ((Cell) hitActor2).changeColor(Color.GRAY);
+                            ((Cell) hitActor2).setShot(true);
+                            messageLabel.setText("      User shot at " + computerGround.getGround().getCellName((Cell) hitActor2) + " and missed.");
+                            whoIsNext = 1;
+                        }
+                    }
+                } else if (hitActor2.getClass() == Cell.class && randomAction == 1) {
+                    messageLabel.setText("User tried to shoot, but missile detonated on their field!");
+                    int i = computerGround.getGround().getI((Cell) hitActor2);
+                    int j = computerGround.getGround().getJ((Cell) hitActor2);
+                    expl.setPosition(userGround.getCell(i,j).getX(),userGround.getCell(i,j).getY());
+                    expl.setVisible(true);
+                    if (userGround.checkShotCell(userGround.getCell(i, j)) && !userGround.getCell(i,j).isShot()) {
+
+
+
+                        if (userGround.killCell(userGround.getCell(i, j))) {
+                            messageLabel.setText("User tried to shoot at " + computerGround.getGround().getCellName((Cell) hitActor2) + ", but missile detonated on their field and killed the ship!");
+                            computerGround.getGround().setScore(computerGround.getGround().getScore()+1);
+                            computerGround.setBonusScore(computerGround.getBonusScore()-1);
+                        } else {
+                            messageLabel.setText("User tried to shoot at " + computerGround.getGround().getCellName((Cell) hitActor2) + ", but missile detonated on their field and damaged the ship!");
+                            computerGround.setBonusScore(computerGround.getBonusScore()-1);
+
+                        }
+                        if(!computerGround.getDamagedCells().isEmpty() && userGround.getCell(i,j).getBoat()!=null) {
+                            if (userGround.getCell(i, j).getBoat().equals(computerGround.getDamagedCells().get(0).getBoat()))
+                                computerGround.getDamagedCells().clear();
+                        }
+                        whoIsNext=1;
+                    }
+                    else {
+                       userGround.getCell(i, j).changeColor(Color.GRAY);
+                       userGround.getCell(i, j).setShot(true);
+                        messageLabel.setText("User tried to shoot at " + computerGround.getGround().getCellName((Cell) hitActor2) + ", but missile detonated on their field!");
+                        whoIsNext = 1;
+                    }
+                }
+                else if (hitActor2.getClass() == Cell.class && randomAction == 2) {
+                        messageLabel.setText("Large wave came in, damaging both fields!");
+                        whoIsNext=1;
+                    }
+
+
+                }
             }
+            return true;
         }
-        return true;
-    }
+
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
