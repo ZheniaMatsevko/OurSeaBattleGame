@@ -32,7 +32,10 @@ public class EndScreen extends ScreenAdapter implements InputProcessor {
     private Image continueImage;
     private int score;
     private int level;
-    public EndScreen(SeaBattleGame game,int whoWin, int score, int level){
+    private int bonusScore;
+
+    public EndScreen(SeaBattleGame game,int whoWin, int score, int level, int bonusScore){
+        this.bonusScore=bonusScore;
         this.level = level;
         this.game = game;
         this.score = score;
@@ -53,7 +56,7 @@ public class EndScreen extends ScreenAdapter implements InputProcessor {
         restart = new Image(new Texture(Gdx.files.internal("restart.png")));
         restart.setPosition(Gdx.graphics.getWidth()/9*5+130,Gdx.graphics.getHeight()-535);
         continueImage = new Image(new Texture(Gdx.files.internal("continue.png")));
-        continueImage.setPosition(Gdx.graphics.getWidth()/9*6,Gdx.graphics.getHeight()-535);
+        continueImage.setPosition(Gdx.graphics.getWidth()/9*6,Gdx.graphics.getHeight()-615);
         menu = new Image(new Texture(Gdx.files.internal("menu.png")));
         menu.setPosition(20,Gdx.graphics.getHeight()-menu.getHeight()-20);
         stage.addActor(menu);
@@ -79,10 +82,14 @@ public class EndScreen extends ScreenAdapter implements InputProcessor {
         ScreenUtils.clear(0, 0, 0, 1);
         batch.begin();
         sprite.draw(batch);
-        if(whoWin==-1)
-            font.draw(batch,"Your score: " + score + "/10 boats",gameOver.getX()-30, gameOver.getY()-30);
-        else
-            font.draw(batch,"Your score: " + score + "/10 boats",victory.getX()-100, victory.getY()-30);
+        if (whoWin == -1) {
+
+            font.draw(batch, "Your score: " + score + "/10 boats", gameOver.getX() - 30, gameOver.getY() - 30);
+
+        } else {
+            font.draw(batch, "Your score: " + score + "/10 boats", victory.getX() - 100, victory.getY() - 30);
+            font.draw(batch, "You earned " + bonusScore + " bonus points!", victory.getX() - 125, victory.getY() - 110);
+        }
         batch.end();
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
@@ -110,17 +117,17 @@ public class EndScreen extends ScreenAdapter implements InputProcessor {
         if(whoWin==1){
             if(hitActor==continueImage){
                 System.out.println("Hit " + hitActor.getClass());
-                game.setScreen(new PutShipsScreen(game,level));
+                game.setScreen(new PutShipsScreen(game,level,bonusScore));
             }
         }else{
             if(hitActor==restart){
                 System.out.println("Hit " + hitActor.getClass());
-                game.setScreen(new PutShipsScreen(game,level));
+                game.setScreen(new PutShipsScreen(game,level,bonusScore));
             }
         }
         if(hitActor==menu){
             System.out.println("Hit " + hitActor.getClass());
-            game.setScreen(new MainMenu(game,level));
+            game.setScreen(new MainMenu(game,level,bonusScore));
         }
         return true;
     }

@@ -48,9 +48,13 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
     private Image minusBomb;
     private Image plusRadar;
     private Image minusRadar;
+    private int bonusScore;
+    private Label noMoreBonus;
+    private Label bonusTooExpensive;
+    private BitmapFont fontBig;
 
-
-    public PutShipsScreen(SeaBattleGame game, int level) {
+    public PutShipsScreen(SeaBattleGame game, int level, int bonusScore) {
+        this.bonusScore = bonusScore;
         this.level = level;
         skin = new Skin(Gdx.files.internal("uiskin.json"));
         this.game = game;
@@ -130,6 +134,31 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
         stage.addActor(playButton);
         stage.addActor(radar);
         stage.addActor(bomb);
+
+
+        /**текст про недостатню кількість очок для придбання бонусів або досягнутого ліміта по бонусам**/
+        FreeTypeFontGenerator generatorBig = new FreeTypeFontGenerator(Gdx.files.internal("ukr.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameterBig = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameterBig.size = 20;
+        parameterBig.color = Color.WHITE;
+        parameterBig.borderWidth = 3;
+        parameterBig.borderColor = Color.BLACK;
+        fontBig = generatorBig.generateFont(parameterBig);
+        Label.LabelStyle styleBonus = new Label.LabelStyle();
+        styleBonus.font = fontBig;
+        styleBonus.fontColor = Color.RED;
+        bonusTooExpensive = new Label("You don't have enough points!",styleBonus);
+        bonusTooExpensive.setPosition(Gdx.graphics.getWidth()/3+410,Gdx.graphics.getHeight()/3+30);
+        stage.addActor(bonusTooExpensive);
+
+        noMoreBonus = new Label("You have already reached the limit\n for this bonus!",styleBonus);
+        noMoreBonus.setPosition(Gdx.graphics.getWidth()/3+350,Gdx.graphics.getHeight()/3+30);
+        noMoreBonus.setVisible(false);
+        bonusTooExpensive.setVisible(false);
+        stage.addActor(noMoreBonus);
+
+
+
         if(level==1){
             radar.setColor(Color.BLACK);
             bomb.setColor(Color.BLACK);
@@ -160,7 +189,7 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
             super(title, skin, windowStyleName);
         }
         {
-            text("It`s a cool bomb with which you can kill\nseveral cells at once!");
+            text("It`s a cool bomb with which you can kill\nseveral cells at once!\nCosts: 2 points");
             button("OK");
         }
 
@@ -183,7 +212,7 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
             super(title, skin, windowStyleName);
         }
         {
-            text("It`s a cool radar with which you can check\nseveral cells at once for ships!");
+            text("It`s a cool radar with which you can check\nseveral cells at once for ships!\nCosts: 1 point");
             button("OK");
         }
 
@@ -204,7 +233,7 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
         sprite.draw(batch);
         font.draw(batch,"Level "+level,235,Gdx.graphics.getHeight()-50);
         font.draw(batch,"Put ships on the field",110,150);
-        font.draw(batch,"Bonuses",Gdx.graphics.getWidth()-430,Gdx.graphics.getHeight()-50);
+        font.draw(batch,"Bonuses (your score: " + bonusScore + ")",Gdx.graphics.getWidth()-565,Gdx.graphics.getHeight()-50);
         batch.end();
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
@@ -227,6 +256,7 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        removeWarnings();
         Vector2 coord = stage.screenToStageCoordinates(new Vector2((float)screenX,(float) screenY));
         Actor hitActor = playGround.getStage().hit(coord.x,coord.y,true);
         Actor hitActor2 = stage.hit(coord.x,coord.y,true);
@@ -244,21 +274,52 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
             radarInfoDialog.show(stage);
         }
         else if(hitActor2==plusBomb){
-            numberOfBombs++;
+            if(bonusScore>=2 && numberOfBombs<2) {
+                numberOfBombs++;
+                bonusScore -= 2;
+                System.out.println(bonusScore);
+                bonusTooExpensive.setVisible(false);
+            }
+            else if (numberOfBombs<3){
+                removeWarnings();
+                bonusTooExpensive.setVisible(true);
+            }
+            else {
+                removeWarnings();
+                noMoreBonus.setVisible(true);
+            }
             countBombsLabel.setText(" " + numberOfBombs);
         }else if(hitActor2==minusBomb && numberOfBombs>0){
             numberOfBombs--;
+            bonusScore+=2;
+            System.out.println(bonusScore);
             countBombsLabel.setText(" " + numberOfBombs);
         }else if(hitActor2==plusRadar){
+            if (bonusScore >= 1 && numberOfRadars<3) {
+
             numberOfRadars++;
+            bonusScore--;
+            System.out.println(bonusScore);
+            bonusTooExpensive.setVisible(false);
+            }
+            else if (numberOfRadars<3){
+                removeWarnings();
+                bonusTooExpensive.setVisible(true);
+            }
+            else {
+                removeWarnings();
+                noMoreBonus.setVisible(true);
+            }
             countRadarsLabel.setText(" " + numberOfRadars);
         }else if(hitActor2==minusRadar && numberOfRadars>0){
             numberOfRadars--;
+            bonusScore++;
+            System.out.println(bonusScore);
             countRadarsLabel.setText(" " + numberOfRadars);
         }
         else if(hitActor2==playButton.getImage()){
             System.out.println("Play button");
-            game.setScreen(new MainGameScreen(game,playGround,level,numberOfBombs,numberOfRadars));
+            game.setScreen(new MainGameScreen(game,playGround,level,numberOfBombs,numberOfRadars,bonusScore));
         }else if(hitActor2==putAgainButton.getImage()){
             System.out.println("AGAIN button");
             playGround.cleanField();
@@ -279,6 +340,9 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
                 playGround.setIsBoatChanged(0);
             }
         }
+       // if(hitActor!=plusBomb&&hitActor!=plusRadar) {
+         //   removeWarnings();
+        //}
         return true;
     }
 
@@ -336,5 +400,10 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
     @Override
     public boolean scrolled(float amountX, float amountY) {
         return false;
+    }
+
+    private void removeWarnings() {
+        bonusTooExpensive.setVisible(false);
+        noMoreBonus.setVisible(false);
     }
 }
