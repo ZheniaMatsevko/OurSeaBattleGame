@@ -42,11 +42,12 @@ public class HelpScreen extends ScreenAdapter implements InputProcessor {
     private Image illustration;
     private ArrayList<String> helpMessages = new ArrayList<>();
     private ArrayList<Image> helpImages = new ArrayList<>();
+    private int bonusScore;
 
-    public HelpScreen(SeaBattleGame game, int level)
+    public HelpScreen(SeaBattleGame game, int level, int bonusScore)
     {
 
-
+        this.bonusScore = bonusScore;
         this.level = level;
         this.game = game;
         helpStage = 0;
@@ -178,7 +179,7 @@ public class HelpScreen extends ScreenAdapter implements InputProcessor {
 
         if(hitActor==menu.getImage()){
             System.out.println("Hit " + hitActor.getClass());
-            game.setScreen(new MainMenu(game,level));
+            game.setScreen(new MainMenu(game,level,bonusScore));
         }
 
         else if(hitActor==forward.getImage()) {

@@ -17,6 +17,14 @@ public class ComputerGround extends Actor {
     private boolean isStrike;
     private List<Cell> damagedCells;
     private int damagedDirection;
+
+
+    private int bonusScore = 20;
+
+    public int getBonusScore(){
+        return bonusScore;
+    }
+
     public ComputerGround(int numberOfCellsInRow, int numberOfBoats, int x, int y, PlayGround userGround){
         ground = new PlayGround(numberOfCellsInRow,numberOfBoats,x,y);
         ground.setBoatsVisible(false);
@@ -54,6 +62,7 @@ public class ComputerGround extends Actor {
                 }else{
                     messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and killed the ship!");
                 }
+                bonusScore--;
                 isStrike = true;
             }else{
                 cell.changeColor(Color.GRAY);
@@ -105,6 +114,7 @@ public class ComputerGround extends Actor {
                         messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and killed the ship!");
                     }
                     damagedDirection=direction;
+                    bonusScore--;
                     isStrike = true;
                 }else{
                     cell.changeColor(Color.GRAY);
@@ -125,6 +135,7 @@ public class ComputerGround extends Actor {
                                 damagedCells.clear();
                                 messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and killed the ship!");
                             }
+                            bonusScore--;
                             isStrike = true;
                         }else{
                             cell.changeColor(Color.GRAY);
@@ -143,6 +154,7 @@ public class ComputerGround extends Actor {
                                 messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and killed the ship!");
                             }
                             isStrike = true;
+                            bonusScore--;
                         }else{
                             cell.changeColor(Color.GRAY);
                             cell.setShot(true);
@@ -161,6 +173,7 @@ public class ComputerGround extends Actor {
                                 damagedCells.clear();
                                 messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and killed the ship!");
                             }
+                            bonusScore--;
                             isStrike = true;
                         }else{
                             cell.changeColor(Color.GRAY);
@@ -179,6 +192,7 @@ public class ComputerGround extends Actor {
                                 damagedCells.clear();
                                 messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and killed the ship!");
                             }
+                            bonusScore--;
                             isStrike = true;
                         }else{
                             cell.changeColor(Color.GRAY);
@@ -200,6 +214,7 @@ public class ComputerGround extends Actor {
                                 damagedCells.clear();
                                 messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and killed the ship!");
                             }
+                            bonusScore--;
                             isStrike = true;
                         }else{
                             cell.changeColor(Color.GRAY);
@@ -218,6 +233,7 @@ public class ComputerGround extends Actor {
                                 damagedCells.clear();
                                 messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and killed the ship!");
                             }
+                            bonusScore--;
                             isStrike = true;
                         }else{
                             cell.changeColor(Color.GRAY);
@@ -237,6 +253,7 @@ public class ComputerGround extends Actor {
                                 damagedCells.clear();
                                 messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and killed the ship!");
                             }
+                            bonusScore--;
                             isStrike = true;
                         }else{
                             cell.changeColor(Color.GRAY);
@@ -255,6 +272,7 @@ public class ComputerGround extends Actor {
                                 damagedCells.clear();
                                 messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and killed the ship!");
                             }
+                            bonusScore--;
                             isStrike = true;
                         }else{
                             cell.changeColor(Color.GRAY);
