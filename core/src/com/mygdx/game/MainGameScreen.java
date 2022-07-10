@@ -245,7 +245,7 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
                 }
             }, waveDelay);
         }
-        float delay = 2;
+        float delay = 0;
         if (pauseDialog.isVisible() == false) {
             if (whoIsNext == 1) {
                 whoIsNext = 3;
