@@ -396,6 +396,13 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
 
                     else randomAction = 0;
                     if (randomAction == 2 && userGround.getScore() == 9) randomAction = 1;
+                    if(randomAction==1){
+                        int i = computerGround.getGround().getI((Cell) hitActor2);
+                        int j = computerGround.getGround().getJ((Cell) hitActor2);
+                        if(userGround.getCell(i, j).isShot()){
+                            randomAction=0;
+                        }
+                    }
                 }
 
 
