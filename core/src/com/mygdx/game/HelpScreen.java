@@ -178,11 +178,15 @@ public class HelpScreen extends ScreenAdapter implements InputProcessor {
 
 
         if(hitActor==menu.getImage()){
+            if(game.soundState)  game.clicksound.play();
+
             System.out.println("Hit " + hitActor.getClass());
             game.setScreen(new MainMenu(game,level,bonusScore));
         }
 
         else if(hitActor==forward.getImage()) {
+            if(game.soundState)  game.clicksound.play();
+
             System.out.println("Hit " + hitActor.getClass());
             if(this.helpStage<this.helpMessages.size()-1) {
                 helpStage++;
@@ -193,6 +197,8 @@ public class HelpScreen extends ScreenAdapter implements InputProcessor {
 
         }
         else if(hitActor==back.getImage()) {
+            if(game.soundState) game.clicksound.play();
+
             System.out.println("Hit " + hitActor.getClass());
             if(this.helpStage>0) {
                 helpStage--;

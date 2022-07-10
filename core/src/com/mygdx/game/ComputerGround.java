@@ -69,9 +69,12 @@ public class ComputerGround extends Actor {
                 if(!userGround.killCell(cell)){
                     damagedCells.add(cell);
                     messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and damaged the ship!");
+                  if(game.soundState)  game.damage.play();
+
                 }else{
                     messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and killed the ship!");
                     game.setYourShipsKilled(game.getYourShipsKilled()+1);
+                    if(game.soundState) game.shipdestroy.play();
                 }
                 bonusScore--;
                 isStrike = true;
@@ -80,6 +83,7 @@ public class ComputerGround extends Actor {
                 cell.setShot(true);
                 isStrike = false;
                 messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and missed.");
+                if(game.soundState)  game.randomMiss().play(0.5f);
             }
         }else{
             boolean shouldRepeat = true;
@@ -119,10 +123,14 @@ public class ComputerGround extends Actor {
                     if(!userGround.killCell(cell)){
                         damagedCells.add(cell);
                         messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and damaged the ship!");
+                        if(game.soundState)  game.damage.play();
+
                     }else{
                         damagedCells.clear();
                         messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and killed the ship!");
                         game.setYourShipsKilled(game.getYourShipsKilled()+1);
+                        if(game.soundState)   game.shipdestroy.play();
+
                     }
                     damagedDirection=direction;
                     bonusScore--;
@@ -132,6 +140,8 @@ public class ComputerGround extends Actor {
                     cell.setShot(true);
                     isStrike = false;
                     messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and missed.");
+                    if(game.soundState)  game.randomMiss().play(0.5f);
+
                 }
             }else{
                 if(damagedDirection<2){
@@ -177,10 +187,14 @@ public class ComputerGround extends Actor {
                 if (!userGround.killCell(cell)) {
                     damagedCells.add(cell);
                     messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and damaged the ship!");
+                    if(game.soundState)   game.damage.play();
+
                 } else {
                     damagedCells.clear();
                     messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and killed the ship!");
                     game.setYourShipsKilled(game.getYourShipsKilled() + 1);
+                    if(game.soundState)   game.shipdestroy.play();
+
                 }
                 bonusScore--;
                 isStrike = true;
@@ -189,6 +203,8 @@ public class ComputerGround extends Actor {
                 cell.setShot(true);
                 isStrike = false;
                 messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and missed.");
+                if(game.soundState)  game.randomMiss().play(0.5f);
+
             }
         }
         else {
