@@ -243,12 +243,12 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
 
                                 } else {
                                     c.changeColor(Color.GRAY);
-                                    c.setShot(true);
                                 }
                                 waveMessage += " " + computerGround.getGround().getCellName(c);
                                 if(!second) waveMessage += " and";
                                 else waveMessage+="!";
                                 second = true;
+                                c.setShot(true);
 
                             }
                             messageLabel.setText("  Wave damaged" + waveMessage);
@@ -258,18 +258,22 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
                             waveMessage += " user's";
                             for (Cell c : userGround.chooseWaveCells()) {
                                 if (userGround.checkShotCell(c)) {
-                                    userGround.killCell(c);
+                                    if(userGround.killCell(c)) {
+                                        game.setYourShipsKilled(game.getYourShipsKilled()+1);
+
+                                    }
+                                    computerGround.setBonusScore(computerGround.getBonusScore()-1);
                                 } else {
                                     c.changeColor(Color.GRAY);
-                                    c.setShot(true);
                                 }
                                 waveMessage += " " + userGround.getCellName(c);
                                 if(!second) waveMessage += " and ";
                                 else waveMessage+="!";
                                 second = true;
+                                c.setShot(true);
 
                             }
-                            messageLabel.setText("  Wave damaged " + waveMessage);
+                            messageLabel.setText("  Wave damaged" + waveMessage);
 
                         }
                         whoIsNext=1;
@@ -278,7 +282,7 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
                 }
             }, waveDelay);
         }
-        float delay = 2;
+        float delay = 1;
         if (pauseDialog.isVisible() == false) {
             if (whoIsNext == 1) {
                 whoIsNext = 3;
@@ -425,7 +429,7 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
                 if (level == 3) {
                     int willOcure = random.nextInt(10);
 
-                    if (willOcure < 5) randomAction = random.nextInt(3) + 1;
+                    if (willOcure ==1) randomAction = random.nextInt(3) + 1;
 
                     else randomAction = 0;
                     if ((randomAction == 2) && userGround.getScore() == 9) randomAction = 1;
@@ -460,6 +464,7 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
                         }
                     }
                 } else if (hitActor2.getClass() == Cell.class && randomAction == 1) {
+                    if (!((Cell) hitActor2).isShot()) {
                     messageLabel.setText("  User tried to shoot, but missile detonated on their field!");
                     int i = computerGround.getGround().getI((Cell) hitActor2);
                     int j = computerGround.getGround().getJ((Cell) hitActor2);
@@ -468,7 +473,7 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
                     if (userGround.checkShotCell(userGround.getCell(i, j)) && !userGround.getCell(i, j).isShot()) {
                         if (userGround.killCell(userGround.getCell(i, j))) {
                             messageLabel.setText("  User tried to shoot at " + computerGround.getGround().getCellName((Cell) hitActor2) + ", but missile detonated on their field and killed the ship!");
-                            computerGround.getGround().setScore(computerGround.getGround().getScore() + 1);
+                            //computerGround.getGround().setScore(computerGround.getGround().getScore() + 1);
                             computerGround.setBonusScore(computerGround.getBonusScore() - 1);
                         } else {
                             messageLabel.setText("  User tried to shoot at " + computerGround.getGround().getCellName((Cell) hitActor2) + ", but missile detonated on their field and damaged the ship!");
@@ -478,6 +483,7 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
                             if (userGround.getCell(i, j).getBoat().equals(computerGround.getDamagedCells().get(0).getBoat()))
                                 computerGround.getDamagedCells().clear();
                         }
+                        computerGround.setBonusScore(computerGround.getBonusScore()-1);
                         whoIsNext = 1;
                     } else {
                         userGround.getCell(i, j).changeColor(Color.GRAY);
@@ -492,7 +498,8 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
                     else
                         ((Cell) hitActor2).changeColor(Color.WHITE);
 
-                } else if (hitActor2.getClass() == Cell.class && randomAction == 2) {
+                } }else if (hitActor2.getClass() == Cell.class && randomAction == 2) {
+                    if (!((Cell) hitActor2).isShot()) {
                     messageLabel.setText("  Large wave came in, damaging computer's field!");
                     waveStage = 1;
                     shouldWave = 1;
@@ -504,19 +511,21 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
                         ((Cell) hitActor2).changeColor(Color.valueOf("FBF6AD"));
                     else
                         ((Cell) hitActor2).changeColor(Color.WHITE);
-                }
+                }}
                 else if(hitActor2.getClass()==Cell.class && randomAction ==3) {
-                    messageLabel.setText("  Large wave came in, damaging your field!");
-                    waveStage = 1;
-                    shouldWave = 1;
-                    whoIsNext = 1;
-                    whoWave = false;
-                    if(((Cell) hitActor2).isRadared() && ((Cell) hitActor2).getIsTaken())
-                        ((Cell) hitActor2).changeColor(Color.valueOf("3C5695"));
-                    else if(((Cell) hitActor2).isRadared())
-                        ((Cell) hitActor2).changeColor(Color.valueOf("FBF6AD"));
-                    else
-                        ((Cell) hitActor2).changeColor(Color.WHITE);
+                    if (!((Cell) hitActor2).isShot()) {
+                        messageLabel.setText("  Large wave came in, damaging your field!");
+                        waveStage = 1;
+                        shouldWave = 1;
+                        whoIsNext = 1;
+                        whoWave = false;
+                        if (((Cell) hitActor2).isRadared() && ((Cell) hitActor2).getIsTaken())
+                            ((Cell) hitActor2).changeColor(Color.valueOf("3C5695"));
+                        else if (((Cell) hitActor2).isRadared())
+                            ((Cell) hitActor2).changeColor(Color.valueOf("FBF6AD"));
+                        else
+                            ((Cell) hitActor2).changeColor(Color.WHITE);
+                    }
                 }
 
 
