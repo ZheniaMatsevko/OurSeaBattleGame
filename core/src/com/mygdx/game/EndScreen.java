@@ -117,19 +117,19 @@ public class EndScreen extends ScreenAdapter implements InputProcessor {
             if(hitActor==continueImage){
                 game.wonMusic.stop();
                 game.setScreen(new PutShipsScreen(game,level,bonusScore));
-                game.clicksound.play();
+                if(game.soundState)  game.clicksound.play();
             }
         }else{
             if(hitActor==restart){
                 game.lostMusic.stop();
                 game.setScreen(new PutShipsScreen(game,level,bonusScore));
-                game.clicksound.play();
+                if(game.soundState) game.clicksound.play();
             }
         }
         if(hitActor==menu){
             game.lostMusic.stop();
             game.setScreen(new MainMenu(game,level,bonusScore));
-            game.clicksound.play();
+            if(game.soundState)  game.clicksound.play();
         }
         return true;
     }

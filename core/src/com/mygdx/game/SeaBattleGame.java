@@ -29,6 +29,9 @@ public class SeaBattleGame extends Game {
     public Music lostMusic;
     public Music wonMusic;
     public Music victoryMusic;
+    public float delay = 2;
+    public int musicStage;
+    public boolean soundState;
 
 
 
@@ -73,11 +76,13 @@ public class SeaBattleGame extends Game {
 
 
         shapeRenderer = new ShapeRenderer();
-      // setScreen(new MainMenu(this,3,15));
+      setScreen(new MainMenu(this,1,0));
 
        // setScreen(new PutShipsScreen(this,2));
-       setScreen(new EndScreen(this,-1,10,2,7));
-        //setScreen(new VictoryScreen(this));
+      //setScreen(new EndScreen(this,1,10,2,7));
+       // setScreen(new VictoryScreen(this));
+       // setScreen(new OptionsScreen(this,1,15));
+
     }
     @Override
     public void dispose () {
@@ -100,6 +105,7 @@ public class SeaBattleGame extends Game {
         damage = Gdx.audio.newSound(Gdx.files.internal("damage.wav"));
         wave = Gdx.audio.newSound(Gdx.files.internal("wave.mp3"));
         radar = Gdx.audio.newSound(Gdx.files.internal("radar.mp3"));
+        soundState = true;
 
 
     }
@@ -112,13 +118,17 @@ public class SeaBattleGame extends Game {
         victoryMusic.setVolume(0.5f);
         lostMusic = Gdx.audio.newMusic(Gdx.files.internal("lost.mp3"));
         lostMusic.setVolume(0.5f);
+        wonMusic = Gdx.audio.newMusic(Gdx.files.internal("win.mp3"));
+        wonMusic.setVolume(0.5f);
+        musicStage = 2;
 
     }
     public void musicOff() {
-        mainMusic = null;
-        lostMusic = null;
-        victoryMusic = null;
-        wonMusic = null;
+        mainMusic.setVolume(0);
+        lostMusic.setVolume(0);
+        victoryMusic.setVolume(0);
+       wonMusic.setVolume(0);
+        musicStage = 0;
     }
 
     public void musicLow() {
@@ -126,15 +136,10 @@ public class SeaBattleGame extends Game {
         lostMusic.setVolume(0.2f);
         victoryMusic.setVolume(0.2f);
         wonMusic.setVolume(0.2f);
+        musicStage = 1;
     }
 
     public void soundOff() {
-        clicksound = null;
-        miss1 = null;
-        miss2 = null;
-        shipdestroy = null;
-        click2 = null;
-        damage = null;
-        wave = null;
+     soundState=false;
     }
 }

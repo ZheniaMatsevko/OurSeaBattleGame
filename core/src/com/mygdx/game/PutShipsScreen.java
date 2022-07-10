@@ -279,24 +279,24 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
         Actor hitActor = playGround.getStage().hit(coord.x,coord.y,true);
         Actor hitActor2 = stage.hit(coord.x,coord.y,true);
         if(hitActor2!=null && hitActor2.getClass()== Label.class && ((Label)hitActor2).getText().length==2){
-            game.clicksound.play();
+            if(game.soundState)  game.clicksound.play();
             System.out.println(hitActor2);
             bombInfoDialog.setVisible(false);
             radarInfoDialog.setVisible(false);
         }
         else if(hitActor2==bomb && level>1){
-            game.clicksound.play();
+            if(game.soundState)   game.clicksound.play();
             bombInfoDialog.setVisible(true);
             bombInfoDialog.show(stage);
         }
         else if(hitActor2==radar && level>1){
-            game.clicksound.play();
+            if(game.soundState)   game.clicksound.play();
             radarInfoDialog.setVisible(true);
             radarInfoDialog.show(stage);
         }
         else if(hitActor2==plusBomb){
             if(bonusScore>=2 && numberOfBombs<2) {
-                game.clicksound.play();
+                if(game.soundState)  game.clicksound.play();
                 numberOfBombs++;
                 bonusScore -= 2;
                 System.out.println(bonusScore);
@@ -312,14 +312,14 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
             }
             countBombsLabel.setText(" " + numberOfBombs);
         }else if(hitActor2==minusBomb && numberOfBombs>0){
-            game.clicksound.play();
+            if(game.soundState)  game.clicksound.play();
             numberOfBombs--;
             bonusScore+=2;
             System.out.println(bonusScore);
             countBombsLabel.setText(" " + numberOfBombs);
         }else if(hitActor2==plusRadar){
             if (bonusScore >= 1 && numberOfRadars<3) {
-                game.clicksound.play();
+                if(game.soundState)  game.clicksound.play();
                 numberOfRadars++;
             bonusScore--;
             System.out.println(bonusScore);
@@ -335,18 +335,18 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
             }
             countRadarsLabel.setText(" " + numberOfRadars);
         }else if(hitActor2==minusRadar && numberOfRadars>0){
-            game.clicksound.play();
+            if(game.soundState)  game.clicksound.play();
             numberOfRadars--;
             bonusScore++;
             System.out.println(bonusScore);
             countRadarsLabel.setText(" " + numberOfRadars);
         }
         else if(hitActor2==playButton.getImage()){
-            game.clicksound.play();
+            if(game.soundState)   game.clicksound.play();
             System.out.println("Play button");
             game.setScreen(new MainGameScreen(game,playGround,level,numberOfBombs,numberOfRadars,bonusScore));
         }else if(hitActor2==putAgainButton.getImage()){
-            game.click2.play();
+            if(game.soundState)   game.click2.play();
             System.out.println("AGAIN button");
             playGround.cleanField();
             playGround.putRandomBoats();

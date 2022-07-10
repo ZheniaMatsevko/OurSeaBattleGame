@@ -60,6 +60,7 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
 
         game.mainMusic.play();
         this.bonusScore = bonusScore;
+        this.delay = game.delay;
         skin = new Skin(Gdx.files.internal("star-soldier-ui.json"));
         this.numberOfBombs = numberOfBombs;
         this.numberOfRadars = numberOfRadars;
@@ -222,7 +223,7 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
             this.dispose();
         }
         if (waveStage != 0 && shouldWave == 1) {
-           if(waveStage==1) game.wave.play();
+           if(waveStage==1 &&  game.soundState) game.wave.play();
             shouldWave=3;
             whoIsNext=3;
             System.out.println("WAVE");
@@ -291,7 +292,7 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
                 }
             }, waveDelay);
         }
-         delay = 2;
+
         if (pauseDialog.isVisible() == false) {
             if (whoIsNext == 1) {
                 whoIsNext = 3;
@@ -358,22 +359,22 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
         Actor hitActor2 = computerGround.getGround().getStage().hit(coord.x, coord.y, true);
         Actor hitActor = stage.hit(coord.x, coord.y, true);
         if (hitActor == pause && bonusChosen == 0) {
-            game.clicksound.play();
+            if(game.soundState)  game.clicksound.play();
             System.out.println("Pause");
             pauseDialog.setVisible(true);
             pauseDialog.setZIndex(200);
             pauseDialog.show(stage);
         } else if (hitActor != null && pauseDialog.isVisible() == true && bonusChosen == 0) {
             if (hitActor.getClass() == Label.class && ((Label) hitActor).getText().length == 4) {
-                game.clicksound.play();
+                if(game.soundState)  game.clicksound.play();
                 game.setScreen(new MainMenu(game, level, bonusScore));
                 game.mainMusic.stop();
             } else if (hitActor.getClass() == Label.class && ((Label) hitActor).getText().length == 7) {
-                game.clicksound.play();
+                if(game.soundState)  game.clicksound.play();
                 game.setScreen(new PutShipsScreen(game, level, bonusScore));
                 game.mainMusic.stop();
             } else if (hitActor.getClass() == Label.class && ((Label) hitActor).getText().length == 8) {
-                game.clicksound.play();
+                if(game.soundState)  game.clicksound.play();
                 pauseDialog.setVisible(false);
             }
         } else if (level > 1 && hitActor == bomb && numberOfBombs > 0 && bonusChosen == 0) {
@@ -389,7 +390,7 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
             bomb.setColor(Color.WHITE);
             bonusChosen = 0;
         } else if (hitActor2 != null && bonusChosen == 1 && computerGround.getGround().getRadaredCells() != null) {
-            game.radar.play();
+            if(game.soundState)  game.radar.play();
             /**радар був використаний**/
             game.setRadarsUsed(game.getRadarsUsed() + 1);
             Cell[] cells = computerGround.getGround().getRadaredCells();
@@ -419,16 +420,16 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
                 if (!cell.isShot() && !cell.getIsTaken()) {
                     cell.changeColor(Color.GRAY);
                     cell.setShot(true);
-                    game.damage.play();
+                    if(game.soundState)   game.damage.play();
 
                 } else if (!cell.isShot()) {
                     if (computerGround.getGround().killCell(cell)) {
                         messageLabel.setText("      User bombed " + computerGround.getGround().getCellName(cell) + " and killed the ship!");
-                        game.shipdestroy.play();
+                        if(game.soundState)  game.shipdestroy.play();
 
                     } else {
                         messageLabel.setText("      User bombed " + computerGround.getGround().getCellName(cell) + " and damaged the ship!");
-                        game.damage.play();
+                        if(game.soundState)  game.damage.play();
 
                     }
                     cell.changeColor(Color.GREEN);
@@ -474,17 +475,17 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
                         if (computerGround.getGround().checkShotCell((Cell) hitActor2)) {
                             if (computerGround.getGround().killCell((Cell) hitActor2)) {
                                 messageLabel.setText("      User shot at " + computerGround.getGround().getCellName((Cell) hitActor2) + " and killed the ship!");
-                                game.shipdestroy.play();
+                                if(game.soundState)  game.shipdestroy.play();
 
                             } else {
                                 messageLabel.setText("      User shot at " + computerGround.getGround().getCellName((Cell) hitActor2) + " and damaged the ship!");
-                                game.damage.play();
+                                if(game.soundState)  game.damage.play();
 
                             }
                             ((Cell) hitActor2).changeColor(Color.GREEN);
                         } else {
                             ((Cell) hitActor2).changeColor(Color.GRAY);
-                            game.randomMiss().play(0.5f);
+                            if(game.soundState)   game.randomMiss().play(0.5f);
                             ((Cell) hitActor2).setShot(true);
                             messageLabel.setText("      User shot at " + computerGround.getGround().getCellName((Cell) hitActor2) + " and missed.");
                             whoIsNext = 1;
@@ -501,13 +502,13 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
                         if (userGround.killCell(userGround.getCell(i, j))) {
                             messageLabel.setText("  User tried to shoot at " + computerGround.getGround().getCellName((Cell) hitActor2) + ", but missile detonated on their field and killed the ship!");
                             //computerGround.getGround().setScore(computerGround.getGround().getScore() + 1);
-                            game.shipdestroy.play();
+                            if(game.soundState)  game.shipdestroy.play();
 
                             computerGround.setBonusScore(computerGround.getBonusScore() - 1);
                         } else {
                             messageLabel.setText("  User tried to shoot at " + computerGround.getGround().getCellName((Cell) hitActor2) + ", but missile detonated on their field and damaged the ship!");
                             computerGround.setBonusScore(computerGround.getBonusScore() - 1);
-                            game.damage.play();
+                            if(game.soundState)  game.damage.play();
 
                         }
                         if (!computerGround.getDamagedCells().isEmpty() && userGround.getCell(i, j).getBoat() != null) {
@@ -520,7 +521,7 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
                         userGround.getCell(i, j).changeColor(Color.GRAY);
                         userGround.getCell(i, j).setShot(true);
                         messageLabel.setText("User tried to shoot at " + computerGround.getGround().getCellName((Cell) hitActor2) + ", but missile detonated on their field!");
-                        game.damage.play();
+                        if(game.soundState)  game.damage.play();
                         whoIsNext = 1;
                     }
                     if(((Cell) hitActor2).isRadared() && ((Cell) hitActor2).getIsTaken())
