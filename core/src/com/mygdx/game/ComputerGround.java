@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -201,5 +202,26 @@ public class ComputerGround extends Actor {
     @Override
     public void act(float delta) {
         super.act(delta);
+    }
+
+    public List<Cell> chooseWaveCells(){
+        List<Cell> waveCells = new LinkedList<>();
+       int originX1 = ThreadLocalRandom.current().nextInt(0, userGround.getNumberOfCellsInRow());
+       int originY1 = ThreadLocalRandom.current().nextInt(0, userGround.getNumberOfCellsInRow());
+        while(ground.getCell(originX1,originY1).isShot()){
+            originX1 = ThreadLocalRandom.current().nextInt(0, userGround.getNumberOfCellsInRow());
+            originY1 = ThreadLocalRandom.current().nextInt(0, userGround.getNumberOfCellsInRow());
+        }
+        Cell cell1 = ground.getCell(originX1,originY1);
+        int originX2 = ThreadLocalRandom.current().nextInt(0, userGround.getNumberOfCellsInRow());
+        int originY2 = ThreadLocalRandom.current().nextInt(0, userGround.getNumberOfCellsInRow());
+        while(ground.getCell(originX2,originY2).isShot()){
+            originX2 = ThreadLocalRandom.current().nextInt(0, userGround.getNumberOfCellsInRow());
+            originY2 = ThreadLocalRandom.current().nextInt(0, userGround.getNumberOfCellsInRow());
+        }
+        Cell cell2 = ground.getCell(originX2,originY2);
+        waveCells.add(cell1);
+        waveCells.add(cell2);
+        return waveCells;
     }
 }

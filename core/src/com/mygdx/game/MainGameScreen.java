@@ -45,6 +45,12 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
     private int randomAction = 0;
     private Random random = new Random();
     private Image expl = new Image();
+    private Image wave;
+    private int waveStage = 0;
+    final int waveX = 600;
+    final int waveY = 550;
+    final int stepY = 50;
+
 
     public MainGameScreen(SeaBattleGame game, PlayGround ground, int level, int numberOfBombs, int numberOfRadars,int bonusScore)
     {
@@ -145,6 +151,13 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
         expl.setPosition(500,500);
         stage.addActor(expl);
         expl.setVisible(false);
+
+        wave = new Image(new Texture(Gdx.files.internal("wave.png")));
+        wave.setPosition(waveX,waveY);
+        wave.setVisible(false);
+
+        stage.addActor(wave);
+
         Gdx.input.setInputProcessor(this);
     }
     public static class PauseDialog extends Dialog {
@@ -196,6 +209,22 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
             System.out.println(computerGround.getBonusScore());
         }
         float delay = 2;
+        float wavedelay = 1;
+        if(waveStage!=0) {
+            Timer.schedule(new Timer.Task(){
+                @Override
+                public void run() {
+                    waveAnimation(waveStage);
+                    waveStage++;
+                    if(waveStage>9) {waveStage=0;
+                    wave.setVisible(false);}
+
+                }
+            }, wavedelay);
+        }
+        else {
+            wave.setVisible(false);
+        }
         if(pauseDialog.isVisible()==false){
             if(whoIsNext==1){
                 whoIsNext=3;
@@ -211,6 +240,7 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
                             whoIsNext=0;
                         }
                         expl.setVisible(false);
+                        waveStage=0;
 
                     }
                 }, delay);
@@ -341,9 +371,10 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
                 if (level == 3) {
                     int willOcure = random.nextInt(10);
 
-                    //if (willOcure ==1) randomAction = random.nextInt(2) + 1;
-                    if (willOcure ==1) randomAction = 1;
+                    if (willOcure ==1) randomAction = random.nextInt(2) + 1;
+
                     else randomAction = 0;
+                    if(randomAction==2 && userGround.getScore()==9) randomAction=1;
                 }
 
 
@@ -397,7 +428,20 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
                     }
                 }
                 else if (hitActor2.getClass() == Cell.class && randomAction == 2) {
-                        messageLabel.setText("Large wave came in, damaging both fields!");
+                        messageLabel.setText("Large wave came in, damaging computer's field!");
+                        waveStage = 1;
+                        for(Cell c:computerGround.chooseWaveCells()) {
+                            if(computerGround.getGround().checkShotCell(c))
+                            {
+                                computerGround.getGround().killCell(c);
+                                c.setColor(Color.GREEN);
+
+                            }
+                            else {
+                                c.changeColor(Color.GRAY);
+                                c.setShot(true);
+                            }
+                        }
                         whoIsNext=1;
                     }
 
@@ -596,5 +640,27 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
     @Override
     public boolean scrolled(float amountX, float amountY) {
         return false;
+
     }
-}
+
+    public void waveAnimation(final int i) {
+        float delay = 2;
+                Timer.schedule(new Timer.Task(){
+                    @Override
+                    public void run() {
+                       switch(i){
+                           case 1:
+                               wave.setVisible(true);
+                               wave.setPosition(waveX,waveY);
+                            break;
+                           default:
+                               wave.setPosition(waveX,waveY-stepY*(i-1));
+                                       break;
+                       }
+
+                    }
+                }, delay);
+            }
+        }
+
+
