@@ -101,9 +101,11 @@ public class MainMenu extends ScreenAdapter implements InputProcessor{
         Vector2 coord = stage.screenToStageCoordinates(new Vector2((float)screenX,(float) screenY));
         Actor hitActor = stage.hit(coord.x,coord.y,true);
         if(hitActor==startButton.getImage()){
+            game.clicksound.play();
             System.out.println("Hit " + hitActor.getClass());
             game.setScreen(new PutShipsScreen(game,level,bonusScore));
         }else if(hitActor==helpButton.getImage()){
+            game.clicksound.play();
             System.out.println("Hit " + hitActor.getClass());
             game.setScreen(new HelpScreen(game,level,bonusScore));
         }

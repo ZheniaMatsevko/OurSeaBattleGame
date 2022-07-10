@@ -265,6 +265,7 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
                                     computerGround.setBonusScore(computerGround.getBonusScore()-1);
                                 } else {
                                     c.changeColor(Color.GRAY);
+
                                 }
                                 waveMessage += " " + userGround.getCellName(c);
                                 if(!second) waveMessage += " and ";
@@ -458,6 +459,7 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
                             ((Cell) hitActor2).changeColor(Color.GREEN);
                         } else {
                             ((Cell) hitActor2).changeColor(Color.GRAY);
+                            game.miss1.play();
                             ((Cell) hitActor2).setShot(true);
                             messageLabel.setText("      User shot at " + computerGround.getGround().getCellName((Cell) hitActor2) + " and missed.");
                             whoIsNext = 1;
