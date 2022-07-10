@@ -16,6 +16,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import javax.swing.text.FlowView;
+
 public class EndScreen extends ScreenAdapter implements InputProcessor {
     private SeaBattleGame game;
     private BitmapFont font;
@@ -59,11 +61,13 @@ public class EndScreen extends ScreenAdapter implements InputProcessor {
         menu.setPosition(20,Gdx.graphics.getHeight()-menu.getHeight()-20);
         stage.addActor(menu);
         if(whoWin==1){
+            game.wonMusic.play();
             this.level++;
             sprite = new Sprite(new Texture(Gdx.files.internal("win8.jpg")));
             stage.addActor(victory);
             stage.addActor(continueImage);
         }else{
+            game.lostMusic.play();
             sprite = new Sprite(new Texture(Gdx.files.internal("loseBack.jpg")));
             stage.addActor(gameOver);
             stage.addActor(restart);
@@ -111,15 +115,21 @@ public class EndScreen extends ScreenAdapter implements InputProcessor {
         Actor hitActor = stage.hit(coord.x,coord.y,true);
         if(whoWin==1){
             if(hitActor==continueImage){
+                game.wonMusic.stop();
                 game.setScreen(new PutShipsScreen(game,level,bonusScore));
+                if(game.soundState)  game.clicksound.play();
             }
         }else{
             if(hitActor==restart){
+                game.lostMusic.stop();
                 game.setScreen(new PutShipsScreen(game,level,bonusScore));
+                if(game.soundState) game.clicksound.play();
             }
         }
         if(hitActor==menu){
+            game.lostMusic.stop();
             game.setScreen(new MainMenu(game,level,bonusScore));
+            if(game.soundState)  game.clicksound.play();
         }
         return true;
     }
