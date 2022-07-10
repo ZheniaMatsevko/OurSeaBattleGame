@@ -198,7 +198,7 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
             super(title, skin, windowStyleName);
         }
         {
-            text("It`s a cool bomb with which you can kill\nseveral cells at once!\nCosts: 2 points");
+            text("With a bomb you can kill up to five cells\nat once in the shape of cross!\nCosts: 2 points   Max number: 2");
             button("OK");
         }
 
@@ -221,7 +221,7 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
             super(title, skin, windowStyleName);
         }
         {
-            text("It`s a cool radar with which you can check\nseveral cells at once for ships!\nCosts: 1 point");
+            text("With a radar you can check\nfour cells at once for ships!\nCosts: 1 point   Max number: 2");
             button("OK");
         }
 

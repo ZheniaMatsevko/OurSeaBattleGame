@@ -45,7 +45,7 @@ public class SeaBattleGame extends Game {
     @Override
     public void create () {
         shapeRenderer = new ShapeRenderer();
-       setScreen(new MainMenu(this,3,0));
+       setScreen(new MainMenu(this,2,20));
        // setScreen(new PutShipsScreen(this,2));
        // setScreen(new EndScreen(this,1,10,2,7));
        // setScreen(new VictoryScreen(this));
