@@ -29,10 +29,12 @@ public class PlayGround extends Actor  {
     private boolean isBoatsVisible;
     private Cell paintedCell;
     private int score;
+    private String message;
     private Cell[] radaredCells;
     private LinkedList<Cell> bombedCells;
 
     public PlayGround(int numberOfCellsInRow, int numberOfBoats, int xC, int yC){
+        message=null;
         paintedCell = null;
         isBoatsVisible=true;
         radaredCells = null;
@@ -668,6 +670,7 @@ public class PlayGround extends Actor  {
                 changedBoat.setDirection(0);
                 changedBoat.setPosition(cellOrigin.getX(),cellOrigin.getY());
                 addOldLocation();
+                message="Can`t rotate the boat!";
             }
         }else{
             changedBoat.setRotation(0);
@@ -679,10 +682,15 @@ public class PlayGround extends Actor  {
                 changedBoat.setDirection(1);
                 changedBoat.setPosition(cellOrigin.getX()+getCellWidth(),cellOrigin.getY());
                 addOldLocation();
+                message="Can`t rotate the boat!";
             }
         }
         isBoatChanged=0;
         return true;
+    }
+
+    public String getMessage(){
+        return this.message;
     }
     @Override
     public void draw(Batch batch, float parentAlpha) {
@@ -691,12 +699,21 @@ public class PlayGround extends Actor  {
                  Cell cellOrigin = findCell(changedBoat.getX(),changedBoat.getY()-1);
                 if(changedBoat.getDirection()==1)
                     cellOrigin = findCell(changedBoat.getX()-getCellWidth(),changedBoat.getY()-1);
+                if(changedBoat.getDirection()==1 && changedBoat.getX()-getCellWidth()>=getCell(0,0).getX()){
+                    System.out.println("Boat: " + (changedBoat.getX()-getCellWidth())  + " cell: " + getCell(0,0).getX());
+                }else if(changedBoat.getDirection()==1){
+                    System.out.println("NOO");
+                    changedBoat.setPosition(previousX,previousY);
+                    message="Ships should be located on the field!";
+                }
                 if(cellOrigin!=null){
                     int val = Integer.valueOf(cellOrigin.getName());
                     if(changedBoat.getDirection()==0 && val%10+changedBoat.getSize()>10){
                         changedBoat.setPosition(previousX,previousY);
+                        message="Ships should be located on the field!";
                     }else if(changedBoat.getDirection()==1 && changedBoat.getSize()*10-val>10){
                         changedBoat.setPosition(previousX,previousY);
+                        message="Ships should be located on the field!";
                     }else{
                         removeOldLocation();
                         if(checkIfCanLocateUserBoat(cellOrigin)){
@@ -704,8 +721,10 @@ public class PlayGround extends Actor  {
                             if(changedBoat.getDirection()==1)
                                 changedBoat.setPosition(cellOrigin.getX()+getCellWidth(),cellOrigin.getY());
                             changedBoat.setStartCell(cellOrigin);
+                            message=null;
                         }else{
                             changedBoat.setPosition(previousX,previousY);
+                            message="Ships can`t be located near each other!";
                             addOldLocation();
                         }
                     }
@@ -717,15 +736,18 @@ public class PlayGround extends Actor  {
                         if(checkIfCanLocateUserBoat(cellOrigin)){
                             changedBoat.setPosition(cellOrigin.getX() + getCellWidth(),cellOrigin.getY());
                             changedBoat.setStartCell(cellOrigin);
+                            message="Ships must be located on the screen!";
                         }
                     }
                     else{
                         addOldLocation();
+                        message="Ships must be located on the screen!";
                         changedBoat.setPosition(previousX,previousY);
                     }
                 }
                 else if(cellOrigin==null){
                     changedBoat.setPosition(previousX,previousY);
+                    message="Ships must be located on the field!";
                 }
             }
             previousX = 0;

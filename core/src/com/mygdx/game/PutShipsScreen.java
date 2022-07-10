@@ -29,6 +29,7 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
     private Sprite sprite;
     private Stage stage;
     private BitmapFont font;
+    private BitmapFont errorFont;
     private ImageButton putAgainButton;
     private ImageButton playButton;
     private Skin skin;
@@ -51,6 +52,7 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
     private Label noMoreBonus;
     private Label bonusTooExpensive;
     private BitmapFont fontBig;
+    private String message;
 
     public PutShipsScreen(SeaBattleGame game, int level, int bonusScore) {
         this.bonusScore = bonusScore;
@@ -76,6 +78,13 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
         parameter.borderWidth = 1;
         parameter.borderColor = Color.GRAY;
         font = generator.generateFont(parameter);
+        FreeTypeFontGenerator generator7 = new FreeTypeFontGenerator(Gdx.files.internal("Zyana.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter7 = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter7.size = 33;
+        parameter7.color = Color.RED;
+        parameter7.borderWidth = 1;
+        parameter7.borderColor = Color.BLACK;
+        errorFont = generator7.generateFont(parameter7);
         FreeTypeFontGenerator generator1 = new FreeTypeFontGenerator(Gdx.files.internal("Zyana.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter1 = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter1.size = 45;
@@ -85,6 +94,7 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
         BitmapFont font1 = generator1.generateFont(parameter1);
         Label.LabelStyle style = new Label.LabelStyle();
         style.font = font1;
+        message = "Put ships on the field";
         style.fontColor = Color.BLACK;
         bonusAvailableLabel = new Label("  Available on level 2",style);
         bonusAvailableLabel.setPosition(radar.getX()-10,radar.getY()+60);
@@ -228,10 +238,16 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
+        if(playGround.isBoatChanged()==0 && playGround.getChangedBoat()==null){
+            playGround.putShipsOnItsPlaces();
+        }
         batch.begin();
         sprite.draw(batch);
         font.draw(batch,"Level "+level,235,Gdx.graphics.getHeight()-50);
-        font.draw(batch,"Put ships on the field",110,150);
+        if(playGround.getMessage()!=null)
+            errorFont.draw(batch,playGround.getMessage(),80,150);
+        else
+            font.draw(batch,"Put ships on the field!",110,150);
         font.draw(batch,"Bonuses (your score: " + bonusScore + ")",Gdx.graphics.getWidth()-565,Gdx.graphics.getHeight()-50);
         batch.end();
         stage.act(Gdx.graphics.getDeltaTime());
@@ -251,6 +267,9 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
     @Override
     public boolean keyTyped(char character) {
         return false;
+    }
+    public void setText(String mess){
+        this.message=mess;
     }
 
     @Override
