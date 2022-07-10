@@ -191,7 +191,12 @@ public class ComputerGround extends Actor {
                 messageLabel.setText("      Computer shot at " + userGround.getCellName(cell) + " and missed.");
             }
         }
-        else damagedCells.clear();
+        else {
+        //    damagedCells.clear();
+          //  isStrike = false;
+            //damagedDirection = 0;
+        }
+
     }
     @Override
     public void draw(Batch batch, float parentAlpha) {
