@@ -25,6 +25,9 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Даний клас реалізовує графічний інтерфейс та функції екрану допомоги
+ */
 public class HelpScreen extends ScreenAdapter implements InputProcessor {
 
     private SeaBattleGame game;
@@ -46,7 +49,6 @@ public class HelpScreen extends ScreenAdapter implements InputProcessor {
 
     public HelpScreen(SeaBattleGame game, int level, int bonusScore)
     {
-
         this.bonusScore = bonusScore;
         this.level = level;
         this.game = game;
@@ -119,11 +121,6 @@ public class HelpScreen extends ScreenAdapter implements InputProcessor {
         parameterBig.borderColor = Color.BLACK;
         fontBig = generatorBig.generateFont(parameterBig);
 
-
-        //illustration = new Image(new Texture(Gdx.files.internal("illustration1.png")));
-        //illustration.setPosition( Gdx.graphics.getWidth()/3-50,Gdx.graphics.getHeight()/3-200);
-        //stage.addActor(illustration);
-
         for(Image i:helpImages) {
             i.setPosition(Gdx.graphics.getWidth()/3-30,Gdx.graphics.getHeight()/3-200);
             if(i==helpImages.get(helpImages.size()-1)) i.setPosition(Gdx.graphics.getWidth()/3, Gdx.graphics.getHeight()/3-100);
@@ -141,9 +138,11 @@ public class HelpScreen extends ScreenAdapter implements InputProcessor {
     }
 
     @Override
-    public void show(){
+    public void show(){}
 
-    }
+    /**
+     * Малюємо форму допомоги
+     */
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
@@ -171,6 +170,9 @@ public class HelpScreen extends ScreenAdapter implements InputProcessor {
         return false;
     }
 
+    /**
+     * Відбувається дія при натисканні на екран лівою кнопкою миші
+     */
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         Vector2 coord = stage.screenToStageCoordinates(new Vector2((float)screenX,(float) screenY));
@@ -232,6 +234,9 @@ public class HelpScreen extends ScreenAdapter implements InputProcessor {
         return false;
     }
 
+    /**
+     * Заповнюєм інформацію про гру для форми допомоги
+     */
     private void fillHelpList() {
         this.helpMessages = new ArrayList<>();
         helpMessages.add("Sea Battle is a strategy type guessing game where you play against the computer.\nYour goal is to destroy the fleet of warships of your opponent, while it tries to do\n the same. Whoever destroys the opponent's fleet first is the winner.");

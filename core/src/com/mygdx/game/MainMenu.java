@@ -20,6 +20,9 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+/**
+ * Даний клас реалізовує графічний інтерфейс та функції екрану головного меню
+ */
 public class MainMenu extends ScreenAdapter implements InputProcessor{
     SeaBattleGame game;
     private SpriteBatch batch;
@@ -66,10 +69,10 @@ public class MainMenu extends ScreenAdapter implements InputProcessor{
         sprite.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.input.setInputProcessor(this);
     }
-    public Stage getStage(){
-        return this.stage;
-    }
 
+    /**
+     * Малюємо головне меню
+     */
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
@@ -96,6 +99,9 @@ public class MainMenu extends ScreenAdapter implements InputProcessor{
         return false;
     }
 
+    /**
+     * Відбувається дія при натисканні на екран лівою кнопкою миші
+     */
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         Vector2 coord = stage.screenToStageCoordinates(new Vector2((float)screenX,(float) screenY));

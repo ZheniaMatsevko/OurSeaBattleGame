@@ -24,6 +24,9 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import java.util.ArrayList;
 
+/**
+ * Даний клас реалізовує графічний інтерфейс та функції екрану налаштувань
+ */
 public class OptionsScreen extends ScreenAdapter implements InputProcessor {
 
     private SeaBattleGame game;
@@ -115,9 +118,9 @@ public class OptionsScreen extends ScreenAdapter implements InputProcessor {
 
         style.font = font;
         sound = new Label("Sound effects: ON",style);
+        if(soundState==false) sound.setText("Sound effects: OFF");
         sound.setPosition(Gdx.graphics.getWidth()/2 - 300,Gdx.graphics.getHeight()-460);
         stage.addActor(sound);
-        //sound.setSize(70,50);
 
         sprite = new Sprite(new Texture(Gdx.files.internal("options.jpg")));
 
@@ -127,9 +130,12 @@ public class OptionsScreen extends ScreenAdapter implements InputProcessor {
     }
 
     @Override
-    public void show(){
+    public void show(){}
 
-    }
+    /**
+     * Малюємо екран налаштувань
+     * @param delta
+     */
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
@@ -161,6 +167,9 @@ public class OptionsScreen extends ScreenAdapter implements InputProcessor {
         return false;
     }
 
+    /**
+     * Відбувається дія при натисканні на екран лівою кнопкою миші
+     */
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         Vector2 coord = stage.screenToStageCoordinates(new Vector2((float)screenX,(float) screenY));

@@ -1,7 +1,6 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.*;
@@ -12,17 +11,15 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
-
+/**
+ * Даний клас реалізовує графічний інтерфейс та функції екрану розташування кораблів та купівлі бонусів
+ */
 public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
     SeaBattleGame game;
     private SpriteBatch batch;
@@ -52,7 +49,6 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
     private Label noMoreBonus;
     private Label bonusTooExpensive;
     private BitmapFont fontBig;
-    private String message;
 
     public PutShipsScreen(SeaBattleGame game, int level, int bonusScore) {
         this.bonusScore = bonusScore;
@@ -94,7 +90,6 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
         BitmapFont font1 = generator1.generateFont(parameter1);
         Label.LabelStyle style = new Label.LabelStyle();
         style.font = font1;
-        message = "Put ships on the field";
         style.fontColor = Color.BLACK;
         bonusAvailableLabel = new Label("  Available on level 2",style);
         bonusAvailableLabel.setPosition(radar.getX()-10,radar.getY()+60);
@@ -188,6 +183,10 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
         stage.addActor(radarInfoDialog);
         Gdx.input.setInputProcessor(this);
     }
+
+    /**
+     * Клас, який виводить діалогове вікно з інформацією про бомбу
+     */
     public static class BombInfoDialog extends Dialog{
 
         public BombInfoDialog(String title, Skin skin) {
@@ -211,6 +210,9 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
             super(title, windowStyle);
         }
     }
+    /**
+     * Клас, який виводить діалогове вікно з інформацією про радар
+     */
     public static class RadarInfoDialog extends Dialog{
 
         public RadarInfoDialog(String title, Skin skin) {
@@ -221,7 +223,7 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
             super(title, skin, windowStyleName);
         }
         {
-            text("With a radar you can check\nfour cells at once for ships!\nCosts: 1 point   Max number: 2");
+            text("With a radar you can check\nfour cells at once for ships!\nCosts: 1 point   Max number: 3");
             button("OK");
         }
 
@@ -235,6 +237,10 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
         }
     }
 
+    /**
+     * Малюємо екран розташування кораблів та купівлі бонусів
+     * @param delta
+     */
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
@@ -268,10 +274,10 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
     public boolean keyTyped(char character) {
         return false;
     }
-    public void setText(String mess){
-        this.message=mess;
-    }
 
+    /**
+     * Відбувається дія при натисканні на екран лівою кнопкою миші
+     */
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         removeWarnings();
@@ -366,12 +372,12 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
                 playGround.setIsBoatChanged(0);
             }
         }
-       // if(hitActor!=plusBomb&&hitActor!=plusRadar) {
-         //   removeWarnings();
-        //}
         return true;
     }
 
+    /**
+     * Відбувається дія при відпусканні лівої кнопки миші
+     */
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         if(playGround.isBoatChanged()==1)
@@ -381,6 +387,9 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
         return true;
     }
 
+    /**
+     * Відбувається дія при натисканні на екран лівою кнопкою миші, утриманні її та зміни розташування курсору
+     */
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         Vector2 coord = stage.screenToStageCoordinates(new Vector2((float)screenX,(float) screenY));
@@ -425,6 +434,9 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
         return false;
     }
 
+    /**
+     * Видаляєм попередження
+     */
     private void removeWarnings() {
         bonusTooExpensive.setVisible(false);
         noMoreBonus.setVisible(false);

@@ -21,6 +21,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+/**
+ * Даний клас реалізовує графічний інтерфейс та функції екрану успішного проходження гри
+ */
 public class VictoryScreen extends ScreenAdapter implements InputProcessor {
 
     private SeaBattleGame game;
@@ -68,6 +71,10 @@ public class VictoryScreen extends ScreenAdapter implements InputProcessor {
 
     }
 
+    /**
+     * Малюємо екран успішного проходження гри
+     * @param delta
+     */
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
         batch.begin();
@@ -100,6 +107,9 @@ public class VictoryScreen extends ScreenAdapter implements InputProcessor {
         return false;
     }
 
+    /**
+     * Відбувається дія при натисканні на екран лівою кнопкою миші
+     */
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 

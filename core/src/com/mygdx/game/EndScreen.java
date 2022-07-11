@@ -16,8 +16,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import javax.swing.text.FlowView;
-
+/**
+ * Даний клас реалізовує графічний інтерфейс та функції екрану виграшу/програшу гри
+ */
 public class EndScreen extends ScreenAdapter implements InputProcessor {
     private SeaBattleGame game;
     private BitmapFont font;
@@ -76,9 +77,11 @@ public class EndScreen extends ScreenAdapter implements InputProcessor {
         Gdx.input.setInputProcessor(this);
     }
     @Override
-    public void show(){
+    public void show(){}
 
-    }
+    /**
+     * Малюємо кінцеву форму
+     */
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
@@ -109,6 +112,9 @@ public class EndScreen extends ScreenAdapter implements InputProcessor {
         return false;
     }
 
+    /**
+     * Відбувається дія при натисканні на екран лівою кнопкою миші
+     */
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         Vector2 coord = stage.screenToStageCoordinates(new Vector2((float)screenX,(float) screenY));

@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * Даний клас реалізовує графічний інтерфейс та функції поля для гри
+ */
 public class PlayGround extends Actor  {
     private int numberOfCellsInRow;
     private Group group;
@@ -90,16 +93,34 @@ public class PlayGround extends Actor  {
         isCellDragged = false;
     }
 
+    /**
+     * Задаєм клітинки для бомбардування
+     * @param bombedCells клітинки для бомбардування
+     */
     public void setBombedCells(LinkedList<Cell> bombedCells) {
         this.bombedCells = bombedCells;
     }
+
+    /**
+     * Зчитуєм клітинки для бомбардування
+     * @return клітинки для бомбардування
+     */
     public LinkedList<Cell> getBombedCells(){
         return this.bombedCells;
     }
+
+    /**
+     * Зчитуєм основну клітинку для бомбардування
+     * @return основна клітинка для бомбардування
+     */
     public Cell getMainBombedCell(){
         return bombedCells.getFirst();
     }
 
+    /**
+     * Задаєм клітинки для радару
+     * @param cells клітинки для радару
+     */
     public void setRadaredCells(Cell[] cells){
         if(cells==null)
             radaredCells=null;
@@ -111,15 +132,25 @@ public class PlayGround extends Actor  {
         }
     }
 
+    /**
+     * Зчитуєм основну клітинку для радару
+     * @return основна клітинка для радару
+     */
     public Cell getMainRadaredCell(){
         return radaredCells[0];
     }
+
+    /**
+     * Зчитуєм клітинки для радару
+     * @return клітинки для радару
+     */
     public Cell[] getRadaredCells() {
         return radaredCells;
     }
-    public void setScore(int score){
-        this.score = score;
-    }
+
+    /**
+     * Розставляєм кораблі на свої місця
+     */
     public void putShipsOnItsPlaces(){
         for(int i=0;i<numberOfCellsInRow;i++){
             if(boats[i].getDirection()==0){
@@ -133,6 +164,11 @@ public class PlayGround extends Actor  {
         }
     }
 
+    /**
+     * Задаєм нові координати для клітинок
+     * @param xC новий X
+     * @param yC новий Y
+     */
     public void setNewPositions(int xC, int yC){
         float x = xC, y=yC;
         for(int i=0;i<numberOfCellsInRow;i++){
@@ -159,28 +195,50 @@ public class PlayGround extends Actor  {
                 boats[i].setPosition(boats[i].getStartCell().getX()+getCellWidth(),boats[i].getStartCell().getY());
         }
     }
-    public boolean getIsBoatsVisible(){
-        return isBoatsVisible;
-    }
+
+    /**
+     * Задаєм чи кораблі видно
+     * @param boatsVisible чи кораблі видно
+     */
     public void setBoatsVisible(boolean boatsVisible) {
         isBoatsVisible = boatsVisible;
         for(int i=0;i<numberOfCellsInRow;i++){
             boats[i].setVisible(boatsVisible);
         }
     }
+
+    /**
+     * Перевіряєм чи клітинка зайнята
+     * @param cell клітинка
+     * @return чи клітинка зайнята
+     */
     public boolean checkShotCell(Cell cell){
         if(!cell.getIsTaken())
             return false;
         return true;
     }
 
+    /**
+     * Зчитуєм клітинку, на яку наведений курсор мишки
+     * @return клітинка, на яку наведений курсор мишки
+     */
     public Cell getPaintedCell() {
         return paintedCell;
     }
 
+    /**
+     * Задаєм клітинку, на яку наведений курсор мишки
+     * @param paintedCell клітинка, на яку наведений курсор мишки
+     */
     public void setPaintedCell(Cell paintedCell) {
         this.paintedCell = paintedCell;
     }
+
+    /**
+     * Зчитуєм назву клітинки
+     * @param cell клітинка
+     * @return назва клітинки
+     */
     public String getCellName(Cell cell){
         String name="";
         String letters = "ABCDEFGHIJ";
@@ -188,6 +246,11 @@ public class PlayGround extends Actor  {
         return name;
     }
 
+    /**
+     * Стріляєм в клітинку
+     * @param cell клітинка
+     * @return чи було вбито корабель
+     */
     public boolean killCell(Cell cell){
         cell.setShot(true);
         System.out.println("Shot: "+cell.getName());
@@ -223,35 +286,73 @@ public class PlayGround extends Actor  {
 
     }
 
+    /**
+     * Зчитуєм рахунок гри
+     * @return рахунок гри
+     */
     public int getScore() {
         return score;
     }
 
+    /**
+     * Задаєм чи зміщено клітинку
+     * @param cellDragged чи зміщено клітинку
+     */
     public void setCellDragged(boolean cellDragged) {
         isCellDragged = cellDragged;
     }
 
+    /**
+     * Зчитуєм чи зміщено клітинку
+     * @return чи зміщено клітинку
+     */
     public boolean isCellDragged() {
         return isCellDragged;
     }
 
+    /**
+     * Задаєм попередню координату X клітинки
+     * @param previousX попередня координата X клітинки
+     */
     public void setPreviousX(float previousX) {
         this.previousX = previousX;
     }
-
+    /**
+     * Задаєм попередню координату Y клітинки
+     * @param previousY попередня координата Y клітинки
+     */
     public void setPreviousY(float previousY) {
         this.previousY = previousY;
     }
 
+    /**
+     * Зчитуєм чи було розташування корабля зміщене
+     * @return чи було розташування корабля зміщене
+     */
     public int isBoatChanged() {
         return isBoatChanged;
     }
+
+    /**
+     * Задаєм чи було розташування корабля зміщене
+     * @param val чи було розташування корабля зміщене
+     */
     public void setIsBoatChanged(int val){
         this.isBoatChanged = val;
     }
+
+    /**
+     * Зчитуєм зміщений корабель
+     * @return зміщений корабель
+     */
     public Boat getChangedBoat(){
         return this.changedBoat;
     }
+
+    /**
+     * Задаєм зміщений корабель
+     * @param changedBoat зміщений корабель
+     */
     public void setChangedBoat(Boat changedBoat) {
         if(previousX==0 && previousY==0){
             previousX = changedBoat.getX();
@@ -259,6 +360,13 @@ public class PlayGround extends Actor  {
         }
         this.changedBoat = changedBoat;
     }
+
+    /**
+     * Обстрілюєм суміжні клітинки біля вбитого корабля по горизонталі
+     * @param originX рядок в масиві клітинок
+     * @param originY стовпець в масиві клітинок
+     * @param boatSize розмір корабля
+     */
     private void shotSurroundingHorizontal(int originX, int originY, int boatSize){
         LinkedList<Cell> emptyCells = new LinkedList<>();
         if(originY-1>=0) {
@@ -285,6 +393,12 @@ public class PlayGround extends Actor  {
             cell.changeColor(Color.GRAY);
         }
     }
+    /**
+     * Обстрілюєм суміжні клітинки біля вбитого корабля по вертикалі
+     * @param originX рядок в масиві клітинок
+     * @param originY стовпець в масиві клітинок
+     * @param boatSize розмір корабля
+     */
     private void shotSurroundingVertical(int originX, int originY, int boatSize) {
         LinkedList<Cell> emptyCells = new LinkedList<>();
         if (originX + 1 <numberOfCellsInRow) {
@@ -311,6 +425,13 @@ public class PlayGround extends Actor  {
             cell.changeColor(Color.GRAY);
         }
     }
+    /**
+     * Перевіряєм чи можливо розташувати корабель по горизонталі
+     * @param originX рядок в масиві клітинок
+     * @param originY стовпець в масиві клітинок
+     * @param boatSize розмір корабля
+     * @param boat корабель
+     */
     private boolean checkSurroundingHorizontal(int originX, int originY, int boatSize, Boat boat){
         if(originY-1>=0 && cellsGround[originX][originY-1].getIsTaken()){
             return false;
@@ -360,6 +481,13 @@ public class PlayGround extends Actor  {
         }
         return true;
     }
+    /**
+     * Перевіряєм чи можливо розташувати корабель по вертикалі
+     * @param originX рядок в масиві клітинок
+     * @param originY стовпець в масиві клітинок
+     * @param boatSize розмір корабля
+     * @param boat корабель
+     */
     private boolean checkSurroundingVertical(int originX, int originY, int boatSize, Boat boat){
         if(originX+1<numberOfCellsInRow && cellsGround[originX+1][originY].getIsTaken()){
             return false;
@@ -402,13 +530,26 @@ public class PlayGround extends Actor  {
         }
         return true;
     }
+
+    /**
+     * Зчитуєм ширину клітинки
+     * @return ширина клітинки
+     */
     public float getCellWidth(){
         return cellsGround[0][0].getWidth();
     }
+
+    /**
+     * Зчитуєм висоту клітинки
+     * @return висота клітинки
+     */
     public float getCellHeight(){
         return cellsGround[0][0].getHeight();
     }
 
+    /**
+     * Очищуєм поле
+     */
     public void cleanField(){
         for(int i=0;i<numberOfCellsInRow;i++){
             for(int j=0;j<numberOfCellsInRow;j++){
@@ -419,6 +560,12 @@ public class PlayGround extends Actor  {
             boats[i].setRotation(0);
         }
     }
+
+    /**
+     * Зчитуєм рядок клітинки на полі
+     * @param cell клітинка
+     * @return рядок клітинки на полі
+     */
     public int getI(Cell cell){
         for(int i=0;i<numberOfCellsInRow;i++){
             for(int j=0;j<numberOfCellsInRow;j++){
@@ -428,6 +575,11 @@ public class PlayGround extends Actor  {
         }
         return -1;
     }
+    /**
+     * Зчитуєм рядок стовпець на полі
+     * @param cell клітинка
+     * @return стовпець клітинки на полі
+     */
     public int getJ(Cell cell){
         for(int i=0;i<numberOfCellsInRow;i++){
             for(int j=0;j<numberOfCellsInRow;j++){
@@ -437,12 +589,28 @@ public class PlayGround extends Actor  {
         }
         return -1;
     }
+
+    /**
+     * Зчитуєм клітинку
+     * @param i рядок
+     * @param j стовпець
+     * @return клітинка
+     */
     public Cell getCell(int i, int j){
         return cellsGround[i][j];
     }
+
+    /**
+     * Зчитуєм кількість клітинок в рядку
+     * @return кількість клітинок в рядку
+     */
     public int getNumberOfCellsInRow(){
         return numberOfCellsInRow;
     }
+
+    /**
+     * Розставляєм кораблі на рандомні локації
+     */
     public void putRandomBoats(){
         int originX,originY;
         int direction=0;
@@ -522,6 +690,13 @@ public class PlayGround extends Actor  {
             }
         }
     }
+
+    /**
+     * Зчитуєм клітинку за координатами
+     * @param x координата X
+     * @param y координата Y
+     * @return клітинка
+     */
     public Cell findCell(float x, float y){
         for(int i=0;i<numberOfCellsInRow;i++){
             for(int j=0;j<numberOfCellsInRow;j++){
@@ -533,6 +708,11 @@ public class PlayGround extends Actor  {
         return null;
     }
 
+    /**
+     * Перевіряєм чи можемо розташувати зміщений користувачем корабель
+     * @param cellOrigin початкова клітинка
+     * @return чи можемо розташувати зміщений користувачем корабель
+     */
     private  boolean checkIfCanLocateUserBoat(Cell cellOrigin){
         int x=0,y=0;
         for(int i=0;i<numberOfCellsInRow;i++){
@@ -568,6 +748,12 @@ public class PlayGround extends Actor  {
         }
         return true;
     }
+
+    /**
+     * Видаляєм колишнє розташування корабля по горизонталі
+     * @param originX рядок корабля
+     * @param originY стовпець корабля
+     */
     private void removeOldlocationHorizontal(int originX, int originY){
         if(originY-1>=0) {
             cellsGround[originX][originY - 1].setShouldBeEmpty(false);
@@ -593,6 +779,11 @@ public class PlayGround extends Actor  {
             cellsGround[originX][originY+i].setBoat(null);
         }
     }
+    /**
+     * Видаляєм колишнє розташування корабля по вертикалі
+     * @param originX рядок корабля
+     * @param originY стовпець корабля
+     */
     private void removeOldlocationVertical(int originX, int originY) {
         if (originX + 1 <numberOfCellsInRow) {
             cellsGround[originX+1][originY].setShouldBeEmpty(false);
@@ -618,7 +809,9 @@ public class PlayGround extends Actor  {
             cellsGround[originX-i][originY].setBoat(null);
         }
     }
-
+    /**
+     * Видаляєм колишнє розташування корабля
+     */
     private void removeOldLocation(){
         Cell previous = changedBoat.getStartCell();
         int x=0,y=0;
@@ -638,6 +831,9 @@ public class PlayGround extends Actor  {
                 removeOldlocationVertical(x,y);
         }
     }
+    /**
+     * Добавляєм колишнє розташування корабля по горизонталі
+     */
     private void addOldLocation(){
         Cell previous = changedBoat.getStartCell();
         int x=0,y=0;
@@ -658,6 +854,10 @@ public class PlayGround extends Actor  {
         }
     }
 
+    /**
+     * Обертаємо корабель
+     * @return чи вдалось повернути корабель
+     */
     public boolean Rotate(){
         Cell cellOrigin = changedBoat.getStartCell();
         removeOldLocation();
@@ -690,9 +890,19 @@ public class PlayGround extends Actor  {
         return true;
     }
 
+    /**
+     * Зчитуєм повідомлення
+     * @return повідомлення
+     */
     public String getMessage(){
         return this.message;
     }
+
+    /**
+     * Малюємо поле для гри
+     * @param batch
+     * @param parentAlpha
+     */
     @Override
     public void draw(Batch batch, float parentAlpha) {
         if(isBoatChanged==2 && isCellDragged==false){
@@ -758,6 +968,11 @@ public class PlayGround extends Actor  {
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
     }
+
+    /**
+     * Зчитуємо stage
+     * @return stage
+     */
     public Stage getStage(){
         return stage;
     }
@@ -768,6 +983,10 @@ public class PlayGround extends Actor  {
     }
 
 
+    /**
+     * Вибираємо клітинки для хвилі
+     * @return клітинки для хвилі
+     */
     public java.util.List<Cell> chooseWaveCells(){
         List<Cell> waveCells = new LinkedList<>();
         int originX1 = ThreadLocalRandom.current().nextInt(0, this.getNumberOfCellsInRow());

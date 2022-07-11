@@ -12,6 +12,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * Даний клас реалізовує роботу поля комп'ютера, хід комп'ютера, підбір клітинок для хвилі
+ */
 public class ComputerGround extends Actor {
     private PlayGround ground;
     private PlayGround userGround;
@@ -20,22 +23,6 @@ public class ComputerGround extends Actor {
     private int damagedDirection;
     private int bonusScore = 20;
     private SeaBattleGame game;
-
-
-    public List<Cell> getDamagedCells() {
-        return damagedCells;
-    }
-    public void setSeaBattleGame(SeaBattleGame game) {
-        this.game = game;
-    }
-
-    public int getBonusScore(){
-        return bonusScore;
-    }
-    public void setBonusScore(int score) {
-        this.bonusScore = score;
-    }
-
     public ComputerGround(int numberOfCellsInRow, int numberOfBoats, int x, int y, PlayGround userGround){
         ground = new PlayGround(numberOfCellsInRow,numberOfBoats,x,y);
         ground.setBoatsVisible(false);
@@ -43,18 +30,59 @@ public class ComputerGround extends Actor {
         this.userGround = userGround;
         damagedCells = new LinkedList<>();
     }
+
+    /**
+     * Зчитуєм пошкодженні клітинки
+     * @return пошкодженні клітинки
+     */
+    public List<Cell> getDamagedCells() {
+        return damagedCells;
+    }
+
+    /**
+     *Задаєм поле гри
+     * @param game гра
+     */
+    public void setSeaBattleGame(SeaBattleGame game) {
+        this.game = game;
+    }
+
+    /**
+     * Зчитуєм кількість бонусних очок
+     * @return кількість бонусних очок
+     */
+    public int getBonusScore(){
+        return bonusScore;
+    }
+
+    /**
+     * Задаєм кількість бонусних очок
+     * @param score кількість бонусних очок
+     */
+    public void setBonusScore(int score) {
+        this.bonusScore = score;
+    }
+
+    /**
+     * Задаєм поле гри
+     * @return поле гри
+     */
     public PlayGround getGround(){
         return ground;
     }
 
-    public void setStrike(boolean strike) {
-        isStrike = strike;
-    }
-
+    /**
+     * Зчитуєм чи буде корабель ходити ще раз
+     * @return чи буде корабель ходити ще раз
+     */
     public boolean isStrike() {
         return isStrike;
     }
 
+    /**
+     * Корабель здійснює вистріл
+     * @param messageLabel label для повідомлення
+     */
     public void shoot(Label messageLabel){
         int originX, originY;
         if(damagedCells.isEmpty()){
@@ -181,6 +209,12 @@ public class ComputerGround extends Actor {
 
         }
     }
+
+    /**
+     * Комп'ютер стріляє по клітинці
+     * @param cell клітинка
+     * @param messageLabel label для повідомлення
+     */
     private void compKill(Cell cell,Label messageLabel){
         if(!cell.isShot()) {
             if (userGround.checkShotCell(cell)) {
@@ -207,24 +241,29 @@ public class ComputerGround extends Actor {
 
             }
         }
-        else {
-        //    damagedCells.clear();
-          //  isStrike = false;
-            //damagedDirection = 0;
-        }
-
     }
+
+    /**
+     * Малюємо поле комп'ютера
+     */
     @Override
     public void draw(Batch batch, float parentAlpha) {
         ground.getStage().act(Gdx.graphics.getDeltaTime());
         ground.getStage().draw();
     }
 
+    /**
+     * Stage працює
+     */
     @Override
     public void act(float delta) {
         super.act(delta);
     }
 
+    /**
+     * Вибираєм клітинки для хвилі
+     * @return клітинки для хвилі
+     */
     public List<Cell> chooseWaveCells(){
         List<Cell> waveCells = new LinkedList<>();
        int originX1 = ThreadLocalRandom.current().nextInt(0, userGround.getNumberOfCellsInRow());
