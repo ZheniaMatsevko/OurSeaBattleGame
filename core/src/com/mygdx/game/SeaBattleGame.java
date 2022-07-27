@@ -103,10 +103,8 @@ public class SeaBattleGame extends Game {
      */
     @Override
     public void create () {
-
         soundOn();
         musicOn();
-
         shapeRenderer = new ShapeRenderer();
         setScreen(new MainMenu(this,1,0));
     }

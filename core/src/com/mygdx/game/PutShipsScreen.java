@@ -286,7 +286,6 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
         Actor hitActor2 = stage.hit(coord.x,coord.y,true);
         if(hitActor2!=null && hitActor2.getClass()== Label.class && ((Label)hitActor2).getText().length==2){
             if(game.soundState)  game.clicksound.play();
-            System.out.println(hitActor2);
             bombInfoDialog.setVisible(false);
             radarInfoDialog.setVisible(false);
         }
@@ -305,7 +304,6 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
                 if(game.soundState)  game.clicksound.play();
                 numberOfBombs++;
                 bonusScore -= 2;
-                System.out.println(bonusScore);
                 bonusTooExpensive.setVisible(false);
             }
             else if (numberOfBombs<2){
@@ -321,14 +319,12 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
             if(game.soundState)  game.clicksound.play();
             numberOfBombs--;
             bonusScore+=2;
-            System.out.println(bonusScore);
             countBombsLabel.setText(" " + numberOfBombs);
         }else if(hitActor2==plusRadar){
             if (bonusScore >= 1 && numberOfRadars<3) {
                 if(game.soundState)  game.clicksound.play();
                 numberOfRadars++;
             bonusScore--;
-            System.out.println(bonusScore);
             bonusTooExpensive.setVisible(false);
             }
             else if (numberOfRadars<3){
@@ -344,21 +340,17 @@ public class PutShipsScreen extends ScreenAdapter implements InputProcessor {
             if(game.soundState)  game.clicksound.play();
             numberOfRadars--;
             bonusScore++;
-            System.out.println(bonusScore);
             countRadarsLabel.setText(" " + numberOfRadars);
         }
         else if(hitActor2==playButton.getImage()){
             if(game.soundState)   game.clicksound.play();
-            System.out.println("Play button");
             game.setScreen(new MainGameScreen(game,playGround,level,numberOfBombs,numberOfRadars,bonusScore));
         }else if(hitActor2==putAgainButton.getImage()){
             if(game.soundState)   game.click2.play();
-            System.out.println("AGAIN button");
             playGround.cleanField();
             playGround.putRandomBoats();
         }
         else if(hitActor!=null){
-            System.out.println("yes" + hitActor.getName() + " " + hitActor.getX()+" " + hitActor.getY() + " class: " + hitActor.getClass());
             if(hitActor.getClass()==Boat.class){
                 playGround.setPreviousY(hitActor.getY());
                 playGround.setPreviousX(hitActor.getX());

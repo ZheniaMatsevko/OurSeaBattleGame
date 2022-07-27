@@ -178,8 +178,6 @@ public class OptionsScreen extends ScreenAdapter implements InputProcessor {
 
         if(hitActor==menu.getImage()){
             if(game.soundState)  game.clicksound.play();
-
-            System.out.println("Hit " + hitActor.getClass());
             game.setScreen(new MainMenu(game,level,bonusScore));
         }
         else if(hitActor==delayUp) {

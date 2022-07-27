@@ -108,16 +108,13 @@ public class MainMenu extends ScreenAdapter implements InputProcessor{
         Actor hitActor = stage.hit(coord.x,coord.y,true);
         if(hitActor==startButton.getImage()){
             if(game.soundState) game.clicksound.play();
-            System.out.println("Hit " + hitActor.getClass());
             game.setScreen(new PutShipsScreen(game,level,bonusScore));
         }else if(hitActor==helpButton.getImage()){
             if(game.soundState)  game.clicksound.play();
-            System.out.println("Hit " + hitActor.getClass());
             game.setScreen(new HelpScreen(game,level,bonusScore));
         }
         else if(hitActor==settingsButton.getImage()){
             if(game.soundState)  game.clicksound.play();
-            System.out.println("Hit " + hitActor.getClass());
             game.setScreen(new OptionsScreen(game,level,bonusScore,game.musicStage,game.soundState));
         }
         return true;

@@ -118,7 +118,6 @@ public class VictoryScreen extends ScreenAdapter implements InputProcessor {
 
 
         if (hitActor == restart.getImage()) {
-            System.out.println("Hit " + hitActor.getClass());
             if(game.soundState)  game.clicksound.play();
             game.setScreen(new MainMenu(game, 1,0));
             game.setTotalScore(0);

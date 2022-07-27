@@ -228,7 +228,6 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
             if (level < 3 || checkForWin() == -1)
                 game.setScreen(new EndScreen(game, checkForWin(), computerGround.getGround().getScore(), level, bonusScore));
             else game.setScreen(new VictoryScreen(game));
-            System.out.println(computerGround.getBonusScore());
             game.mainMusic.stop();
             this.dispose();
         }
@@ -236,11 +235,9 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
             if(waveStage==1 &&  game.soundState) game.wave.play();
             shouldWave=3;
             whoIsNext=3;
-            System.out.println("WAVE");
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
-                    System.out.println("In run wave");
                     String waveMessage = "";
                     waveAnimation(waveStage, whoWave);
                     waveStage++;
@@ -372,7 +369,6 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
         Actor hitActor = stage.hit(coord.x, coord.y, true);
         if (hitActor == pause && bonusChosen == 0) {
             if(game.soundState)  game.clicksound.play();
-            System.out.println("Pause");
             pauseDialog.setVisible(true);
             pauseDialog.setZIndex(200);
             pauseDialog.show(stage);
@@ -456,16 +452,14 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
                 bomb.setColor(Color.GRAY);
         } else if (hitActor2 != null && bonusChosen == 0) {
             if (whoIsNext == 0) {
-                System.out.println("yes" + hitActor2.getName() + " " + hitActor2.getX() + " " + hitActor2.getY() + " class: " + hitActor2.getClass());
-
                 /**рандомні події
                  * 1 - вибух на своєму полі
-                 * 2 - хвиля**/
+                 * 2 - хвиля
+                 * 3 - вибух на полі противника**/
                 if (level == 3) {
                     int willOcure = random.nextInt(10);
 
-                    if (willOcure ==1) randomAction = random.nextInt(3) + 1;
-
+                    if (willOcure ==1 || willOcure==2) randomAction = random.nextInt(3) + 1;
                     else randomAction = 0;
                     if ((randomAction == 2) && userGround.getScore() == 9) randomAction = 1;
                     if ((randomAction == 3) && computerGround.getGround().getScore() == 9) randomAction = 1;
@@ -511,7 +505,6 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
                         if (userGround.checkShotCell(userGround.getCell(i, j)) && !userGround.getCell(i, j).isShot()) {
                             if (userGround.killCell(userGround.getCell(i, j))) {
                                 messageLabel.setText("  User tried to shoot at " + computerGround.getGround().getCellName((Cell) hitActor2) + ", but missile detonated on their field and killed the ship!");
-                                //computerGround.getGround().setScore(computerGround.getGround().getScore() + 1);
                                 if(game.soundState)  game.shipdestroy.play();
 
                                 computerGround.setBonusScore(computerGround.getBonusScore() - 1);

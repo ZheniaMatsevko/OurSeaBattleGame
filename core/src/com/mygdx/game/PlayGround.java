@@ -253,10 +253,8 @@ public class PlayGround extends Actor  {
      */
     public boolean killCell(Cell cell){
         cell.setShot(true);
-        System.out.println("Shot: "+cell.getName());
         if(cell.getBoat().strike()){
             score++;
-            System.out.println("Killed");
             cell.getBoat().setVisible(true);
             Image cross = new Image(new Texture(Gdx.files.internal("x.png")));
             cross.setPosition(cell.getX(),cell.getY());
@@ -277,7 +275,6 @@ public class PlayGround extends Actor  {
                 shotSurroundingVertical(x,y,cell.getBoat().getSize());
             return true;
         }else{
-            System.out.println("Damaged");
             Image cross = new Image(new Texture(Gdx.files.internal("x.png")));
             cross.setPosition(cell.getX(),cell.getY());
             stage.addActor(cross);
@@ -910,10 +907,11 @@ public class PlayGround extends Actor  {
                  Cell cellOrigin = findCell(changedBoat.getX(),changedBoat.getY()-1);
                 if(changedBoat.getDirection()==1)
                     cellOrigin = findCell(changedBoat.getX()-getCellWidth(),changedBoat.getY()-1);
-                if(changedBoat.getDirection()==1 && changedBoat.getX()-getCellWidth()>=getCell(0,0).getX()){
-                    System.out.println("Boat: " + (changedBoat.getX()-getCellWidth())  + " cell: " + getCell(0,0).getX());
-                }else if(changedBoat.getDirection()==1){
-                    System.out.println("NOO");
+                if(changedBoat.getDirection()==1 && changedBoat.getX()-getCellWidth()<getCell(0,0).getX()){
+                    changedBoat.setPosition(previousX,previousY);
+                    message="Ships should be located on the field!";
+                }
+                if(changedBoat.getDirection()==1 && changedBoat.getX()-getCellWidth()>getCell(9,9).getX()+getCellWidth()){
                     changedBoat.setPosition(previousX,previousY);
                     message="Ships should be located on the field!";
                 }
