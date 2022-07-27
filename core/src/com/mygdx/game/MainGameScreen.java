@@ -385,10 +385,10 @@ public class MainGameScreen extends ScreenAdapter implements InputProcessor {
                 if(game.soundState)  game.clicksound.play();
                 pauseDialog.setVisible(false);
             }
-        } else if (level > 1 && hitActor == bomb && numberOfBombs > 0 && bonusChosen == 0) {
+        } else if (whoIsNext==0 && level > 1 && hitActor == bomb && numberOfBombs > 0 && bonusChosen == 0) {
             bomb.setColor(Color.RED);
             bonusChosen = 2;
-        } else if (level > 1 && hitActor == radar && numberOfRadars > 0 && bonusChosen == 0) {
+        } else if (whoIsNext==0 && level > 1 && hitActor == radar && numberOfRadars > 0 && bonusChosen == 0) {
             radar.setColor(Color.PINK);
             bonusChosen = 1;
         } else if (bonusChosen == 1 && hitActor == radar) {
